@@ -20,7 +20,6 @@ def insert_newprofile_up_db(fn, ln, un, em, age, ad, city, prov, ctry, pc):
     conn.close()
 
 def view():
-    date = datetime.now()
     conn=sqlite3.connect("UP.db") #UP.db = user_profile.db
     cur=conn.cursor()
     cur.execute("SELECT * FROM users")
