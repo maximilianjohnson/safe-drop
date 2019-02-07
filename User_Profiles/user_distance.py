@@ -1,3 +1,7 @@
+#Author: Andrew Moreno
+
+
+#imports
 from geopy.geocoders import Nominatim
 from geopy.distance import great_circle
 
