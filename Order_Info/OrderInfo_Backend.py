@@ -84,12 +84,12 @@ def delete(id):
     conn.close()
 
 
-def update(id, SUN, BUN, IN, Cost, Loc):
+def update(SUN, BUN, IN, Cost, Loc, ID):
     conn=sqlite3.connect("OrderInfo_Database.db")
     cur=conn.cursor()
-    cur.execute("UPDATE orderInfo SET S_username=? OR B_username=? OR I_name=?\
-                OR Cost=? OR Location=?  WHERE Order_num=?",\
-               (id, SUN, BUN, IN, Cost, Loc))
+    cur.execute("UPDATE orderInfo SET S_username=?, B_username=?, I_name=?,\
+                Cost=?, Location=?  WHERE ID=?",\
+               (SUN, BUN, IN, Cost, Loc, ID))
     conn.commit()
     conn.close()
 

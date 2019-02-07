@@ -60,8 +60,9 @@ def delete_command():
     OrderInfo_Backend.delete(selected_tuple[0])
 
 def update_command():
-    OrderInfo_Backend.update(selected_tuple[0], SUN_value.get(),\
-    BUN_value.get(), Item_value.get(), Cost_value.get(), Location_value.get())
+    OrderInfo_Backend.update(SUN_value.get(),BUN_value.get(), Item_value.get(),\
+    Cost_value.get(), Location_value.get(), selected_tuple[1])
+
 
 window = Tk()
 
