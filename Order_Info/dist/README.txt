@@ -1,0 +1,1 @@
+running this function will create a new database from SQLite3 in this folder. Further versions should use a distributed database instead. 
