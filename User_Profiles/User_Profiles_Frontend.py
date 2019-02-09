@@ -98,34 +98,34 @@ l5 = Label(window, text="Age")
 l5.grid(row=0, column=8)
 
 l6 = Label(window, text="Date Joined")
-l6.grid(row=0, column=10)
+l6.grid(row=1, column=0)
 
 l7 = Label(window, text="Address")
-l7.grid(row=0, column=12)
+l7.grid(row=1, column=2)
 
 l8 = Label(window, text="City")
-l8.grid(row=0, column=14)
+l8.grid(row=1, column=4)
 
 l9 = Label(window, text="Province")
-l9.grid(row=1, column=0)
+l9.grid(row=1, column=6)
 
 l10 = Label(window, text="Country")
-l10.grid(row=1, column=2)
+l10.grid(row=1, column=8)
 
 l11 = Label(window, text="Postal Code")
-l11.grid(row=1, column=4)
+l11.grid(row=2, column=0)
 
 l12 = Label(window, text="Distance")
-l12.grid(row=1, column=6)
+l12.grid(row=2, column=2)
 
 l13 = Label(window, text="TXA")
-l13.grid(row=1, column=8)
+l13.grid(row=2, column=4)
 
 l14 = Label(window, text="User Rating")
-l14.grid(row=1, column=10)
+l14.grid(row=2, column=6)
 
 l15 = Label(window, text="Status")
-l15.grid(row=1, column=12)
+l15.grid(row=2, column=8)
 
 
 firstname_text = StringVar()
@@ -150,54 +150,54 @@ e5.grid(row=0, column=9)
 
 datejoined_text = StringVar()
 e6 = Entry(window, textvariable=datejoined_text)
-e6.grid(row=0, column=11)
+e6.grid(row=1, column=1)
 
 address_text = StringVar()
 e7 = Entry(window, textvariable=address_text)
-e7.grid(row=0, column=13)
+e7.grid(row=1, column=3)
 
 city_text = StringVar()
 e8 = Entry(window, textvariable=city_text)
-e8.grid(row=0, column=15)
+e8.grid(row=1, column=5)
 
 province_text = StringVar()
 e9 = Entry(window, textvariable=province_text)
-e9.grid(row=1, column=1)
+e9.grid(row=1, column=7)
 
 country_text = StringVar()
 e10 = Entry(window, textvariable=country_text)
-e10.grid(row=1, column=3)
+e10.grid(row=1, column=9)
 
 postalcode_text = StringVar()
 e11 = Entry(window, textvariable=postalcode_text)
-e11.grid(row=1, column=5)
+e11.grid(row=2, column=1)
 
 distance_value = StringVar()
 e12 = Entry(window, textvariable=distance_value)
-e12.grid(row=1, column=7)
+e12.grid(row=2, column=3)
 
 txa_value = StringVar()
 e13 = Entry(window, textvariable=txa_value)
-e13.grid(row=1, column=9)
+e13.grid(row=2, column=5)
 
 userrating_value = StringVar()
 e14 = Entry(window, textvariable=userrating_value)
-e14.grid(row=1, column=11)
+e14.grid(row=2, column=7)
 
 status_text = StringVar()
 e15 = Entry(window, textvariable=status_text)
-e15.grid(row=1, column=13)
+e15.grid(row=2, column=9)
 
 
 
-list1=Listbox(window, height=6, width=230)
-list1.grid(row=2, column=0, rowspan=5, columnspan=14)
+list1=Listbox(window, height=6, width=150)
+list1.grid(row=3, column=0, rowspan=5, columnspan=8)
 
 sb1=Scrollbar(window, orient = VERTICAL)
-sb1.grid(row=2, column=14, rowspan=5, sticky=N+S+W)
+sb1.grid(row=3, column=14, rowspan=5, sticky=N+S+W)
 
 sb2=Scrollbar(window, orient = HORIZONTAL)
-sb2.grid(row=7, column=0, columnspan=14, sticky=W+E+N)
+sb2.grid(row=8, column=0, columnspan=8, sticky=W+E+N)
 
 list1.configure(yscrollcommand=sb1.set)
 sb1.configure(command=list1.yview)
@@ -208,21 +208,21 @@ sb2.configure(command=list1.xview)
 list1.bind('<<ListboxSelect>>', get_selected_row)
 
 b1=Button(window, text="View All", width=12, command=view_command)
-b1.grid(row=2, column=15)
+b1.grid(row=3, column=9)
 
 b2=Button(window, text="Search Entry", width=12, command=search_command)
-b2.grid(row=3, column=15)
+b2.grid(row=4, column=9)
 
 b3=Button(window, text="Add New User", width=12, command=newuser_command)
-b3.grid(row=4, column=15)
+b3.grid(row=5, column=9)
 
 b4=Button(window, text="Update Selected", width=12, command=update_command)
-b4.grid(row=5, column=15)
+b4.grid(row=6, column=9)
 
 b5=Button(window, text="Delete Selected", width=12, command=delete_command)
-b5.grid(row=6, column=15)
+b5.grid(row=7, column=9)
 
 b6=Button(window, text="Close", width=12, command=window.destroy)
-b6.grid(row=7, column=15)
+b6.grid(row=8, column=9)
 
 window.mainloop()
