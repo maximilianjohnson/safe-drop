@@ -2,6 +2,31 @@
 {%block content%}
 <div class="signup">
   <h1>Sign up for SafeDrop</h1>
-  <h3>Please fill out the form below<h3>
+  <h2>Please fill out the form below<h2>
 </div>
+<head>
+    <title>Signup page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+  <div class="container">
+    <h1>Signup Below</h1>
+    <br>
+    <form action="" method="post">
+      <input type="username" placeholder="Username" name="username" value="" min = "4" max = "30" required>
+      <input type="password" placeholder="Password" name="password" value="" min = "8" max = "32" required>
+      <input type="first_name" placeholder="First Name" name="first_name" value="" max = "30" required>
+      <input type="last_name" placeholder="Last Name" name="last_name" value="" max = "32" required>
+      <input type="email" placeholder="Email" name="email" value="" max = "64" required>
+      <input type="age" placeholder="Age" name="age" value="" max = "3" required>
+      <input type="address" placeholder="Address" name="address" value="" max = "50" required>
+      <input type="city" placeholder="City of Residence" name="city" value="" min = "3" max = "32" required>
+      <input type="province" placeholder="Province" name="province" value="" min = "4" max = "30" required>
+      <input type="country" placeholder="Country" name="country" value="" min = "4" max = "32" required>
+      <input type="postal_code" placeholder="Postal Code" name="postal_code" value="" min = "6" max = "8" required>
+      <button type="submit"> Signup </button>
+    </form>
+  </div>
+</body>
 {%endblock%}
