@@ -1,0 +1,102 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #e1e1e1;
+
+}
+
+nav {
+  width: 100%;
+  height: 75px;
+  background-color: #292929;
+
+}
+
+nav p {
+  font-family: arial;
+  color: #fff;
+  font-size: 35px;
+  line-height: 70px;
+  float: left;
+  padding-left: 20px;
+}
+
+nav ul{
+  float: right;
+  padding-right: 50px;
+}
+
+nav ul li {
+  float: right;
+  list-style: none;
+  position: relative;
+}
+
+.menu ul li a {
+  display: block;
+  font-family: arial;
+  color: #fff;
+  font-size: 20px;
+  line-height: 75px;
+  padding: 0px 25px;
+  text-decoration: none;
+}
+
+.user ul li a {
+  display: block;
+  font-family: arial;
+  color: #fff;
+  font-size: 20px;
+  margin-right: -7px;
+  line-height: 75px;
+  text-decoration: none;
+}
+
+.user_dp {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  float: right;
+  position: relative;
+  right: 12px;
+  top: 12px;
+}
+
+.dropdown_icon {
+  width: 15px;
+  height: 10px;
+  float: right;
+  position: relative;
+  right: 29px;
+  top: 34px;
+}
+
+.user_dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  padding: 35px;
+  margin: 0px -10px;
+  border-radius: 0px 0px 8px 8px;
+}
+
+.dropdown_trigger:hover .user_dropdown{
+  display: block;
+}
+
+.user_dropdown li {
+  width: 80px;
+}
+
+.user ul li ul li a{
+  color: #252525;
+  margin: 0px;
+}
+
+.user_dropdown li a:hover {
+  background-color: #e1e1e1;
+  width: 50px;
+}
