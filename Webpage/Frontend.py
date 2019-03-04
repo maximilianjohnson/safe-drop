@@ -15,7 +15,7 @@ all uses postgresql, sqlalchemy, flask and flask_login
 import sys
 sys.path.append('../')
 
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required,\
 logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -23,12 +23,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
+from flask_socketio import SocketIO, join_room, leave_room, send
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@ \
-localhost:5433/SafeDrop_Logins'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -36,10 +37,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
+
+#for the chat portion
+socketio = SocketIO(app)
 
 
 
@@ -57,6 +61,7 @@ class UserLogins(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+db.create_all()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -100,10 +105,6 @@ def login():
         userentry = request.form['username']
         passentry = request.form['password']
         user = UserLogins.query.filter_by(username=userentry).first()
-        print(user)
-        print(userentry)
-        print(passentry)
-        print(check_password_hash(user.password_hash, "admin1"))
         if user is None or not user.check_password(passentry):
             message='Invalid Credentials. Please try again.'
             return render_template("login.html", error = message)
@@ -133,6 +134,37 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/message/',  methods=['GET', 'POST'])
+@login_required
+def message_redirect():
+    if request.method == 'POST':
+        userentry = request.form['username']
+        currentuser = current_user.username
+        if len(userentry) > len(currentuser):
+            chatid = currentuser + "_" + userentry
+        else:
+            chatid = userentry + "_" + currentuser
+        return redirect(url_for('message', chat_id=chatid))
+    return render_template('message_redirect.html')
+
+@app.route('/message/<string:chat_id>_chat/', methods=['GET', 'POST'])
+@login_required
+def message(chat_id):
+    return render_template('message.html', currentuser = str(current_user.username), chatid = chat_id)
+
+def messageReceived(methods=['GET', 'POST']):
+    print('message was received!!!')
+
+@socketio.on('my event')
+def handle_my_custom_event(data, methods=['GET', 'POST']):
+    print('received my event: ' + str(data))
+    room = data['room']
+    join_room(room)
+    socketio.emit('my response',  data, callback=messageReceived, room=room)
+
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
 
 if __name__ == "__main__":
     app.run(debug=True)
