@@ -11,7 +11,7 @@ order status, date in which data was last modified, date transaction resolves
 #Date: Feb 6th
 
 #Imports
-import sqlite3
+import psycopg2
 import uuid
 from datetime import datetime
 
@@ -20,10 +20,10 @@ from datetime import datetime
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
 def connect_OrderInfo_db():
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS orderInfo (Order_num INTEGER\
-                 PRIMARY KEY, ID TEXT, B_username TEXT, S_username TEXT, I_name\
+    cur.execute("CREATE TABLE IF NOT EXISTS orderInfo (id SERIAL, TXID TEXT, \
+                 B_username TEXT, S_username TEXT, I_name\
                  TEXT, date_initialized TEXT, Cost REAL, Location TEXT,\
                  status TEXT, data_modified TEXT, date_resolved TEXT)")
     conn.commit()
@@ -32,20 +32,20 @@ def connect_OrderInfo_db():
 #connects to database
 #connect_OrderInfo_db()
 
-#Function uses values to add new order to SQLite3 database
+#Function uses values to add new order to psycopg2 database
 def newOrder (S_username, B_username, I_name, Cost, Location):
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    connect_OrderInfo_db()
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
-    cur.execute("SELECT COUNT(Order_num) FROM orderInfo")
-    ID = str(uuid.uuid4())
+    TXID = str(uuid.uuid4())
     date_init = str(datetime.now())
     date_resolved = (None)
     date_modified = str(datetime.now())
     status = "Initialized_sellerDrop_FALSE_buyerPickup_FALSE"
     #while check_dup_id(ID) == 1: #commented out due to redundancy
     #    ID = uuid.uuid4()
-    cur.execute("INSERT INTO orderInfo VALUES(NULL, ?, ?, ?, ?, ?, ?, \
-                ?, ?, ?, ?)", (ID, B_username, S_username, I_name, date_init,\
+    cur.execute("INSERT INTO orderInfo VALUES(default, %s, %s, %s, %s, %s, %s, \
+                %s, %s, %s, %s)", (TXID, B_username, S_username, I_name, date_init,\
                 Cost,Location, status, date_modified, date_resolved))
     conn.commit()
     conn.close()
@@ -53,7 +53,7 @@ def newOrder (S_username, B_username, I_name, Cost, Location):
 
 #view Function
 def view():
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("SELECT * FROM orderInfo")
     rows = cur.fetchall()
@@ -63,37 +63,48 @@ def view():
 #Searchable perameters
 #Order number, TXID, Seller username, buyer username, item name,
 #cost, location, date initialized
-def search(ON=(None), TXID=(None), SUN=(None), BUN=(None), IN=(None),\
+def search(id=(None), TXID=(None), SUN=(None), BUN=(None), IN=(None),\
            Cost=(None), Loc=(None), DI=(None)):
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
-    cur.execute("SELECT * FROM orderInfo WHERE Order_num=? OR ID=? OR\
-                S_username=? OR B_username=? OR I_name=? OR Cost=? OR\
-                Location=? OR date_initialized=?",\
+    cur.execute("SELECT * FROM orderInfo WHERE id=%s OR TXID=%s OR\
+                S_username=%s OR B_username=%s OR I_name=%s OR Cost=%s OR\
+                Location=%s OR date_initialized=%s",\
                 (ON, TXID, SUN, BUN, IN, Cost, Loc, DI))
     rows = cur.fetchall()
     conn.close()
     return rows
 
+#function to search specific value in an order
+def search_value(column, ordertxid):
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    cur=conn.cursor()
+    SQL = "SELECT " + column + " FROM orderInfo WHERE TXID=(%s)"
+    data = (ordertxid,)
+    cur.execute(SQL, data)
+    value = cur.fetchall()
+    for item in value:
+        return ("%s" % item)
+
 #delete function for selected record
 def delete(id):
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
-    cur.execute("DELETE FROM orderInfo WHERE Order_num=?", (id,))
+    cur.execute("DELETE FROM orderInfo WHERE id=%s", (id,))
     conn.commit()
     conn.close()
 
 
 def update(SUN, BUN, IN, Cost, Loc, ID):
-    conn=sqlite3.connect("OrderInfo_Database.db")
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
-    cur.execute("UPDATE orderInfo SET S_username=?, B_username=?, I_name=?,\
-                Cost=?, Location=?  WHERE ID=?",\
+    cur.execute("UPDATE orderInfo SET S_username=%s, B_username=%s, I_name=%s,\
+                Cost=%s, Location=%s  WHERE ID=%s",\
                (SUN, BUN, IN, Cost, Loc, ID))
     conn.commit()
     conn.close()
 
-
-#newOrder("nchu6", "maximilianjohnson", "coffee", 1.00, "UBC ESC")
+#connect_OrderInfo_db()
+newOrder("nchu6", "maximilianjohnson", "coffee", 1.00, "UBC ESC")
 #print("New order logged. Thank you.")
 #print(search())

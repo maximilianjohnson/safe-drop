@@ -31,7 +31,7 @@ def create_up_db():
     conn.commit()
     conn.close()
 
-create_up_db()
+#create_up_db()
 #make new profile using the following information
 #first name, last name, username, email, age, postal code,
 #address, city, province, country

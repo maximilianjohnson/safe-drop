@@ -1,9 +1,9 @@
-import sqlite3
+import psycopg2
 from datetime import datetime
 
 #view function for testing
 def view():
-    conn=sqlite3.connect("OrderInfo_Database.db") #UP.db = user_profile.db
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'") #UP.db = user_profile.db
     cur=conn.cursor()
     cur.execute("SELECT * FROM orderInfo")
     rows = cur.fetchall()
@@ -40,8 +40,8 @@ def status_change(status_code):
 
 def Database_Status_Update(status_code, ID):
     date_modified = str(datetime.now())
-    conn=sqlite3.connect("OrderInfo_Database.db") #UP.db = user_profile.db
+    conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'") #UP.db = user_profile.db
     cur=conn.cursor()
-    cur.execute("UPDATE orderInfo SET status=?, data_modified=? WHERE ID =?", (status_change(status_code), date_modified, ID))
+    cur.execute("UPDATE orderInfo SET status=%s, data_modified=%s WHERE TXID =%s", (status_change(status_code), date_modified, ID))
     conn.commit()
     conn.close()
