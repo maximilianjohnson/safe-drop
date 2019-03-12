@@ -1,0 +1,31 @@
+{%extends "index.html"%}
+{%block content%}
+<div class="browse">
+  <div class = "d1">
+    <h1>Listed SafeDrop's</h1>
+    <h3>Welcome, {{current_user.username}}. Here are the most recent SafeDrop's.<h3>
+    <h2>Seller Name: {{ SellerName }}</h2>
+    <h2>Item Name: {{ItemName}}<h2>
+    <h3>Item Desc: {{ItemDesc}}<h3>
+    <h3>Item Cost: {{ItemCost}}<h3>
+    <h3>Location: {{Location}}<h3>
+    <h3>Date Posted: {{date_post}}<h3>
+    <form action="" method="post">
+      <input type="message" placeholder="Message to Seller" name="message" value="" min = "4" max = "100">
+      <button type="submit" name="submit" value="submit"> Buy This Drop </button>
+    </form>
+  </div>
+  <div class = "d2">
+    <h2>Seller Name: {{ SellerName1 }}</h2>
+    <h2>Item Name: {{ItemName1}}<h2>
+    <h3>Item Desc: {{ItemDesc1}}<h3>
+    <h3>Item Cost: {{ItemCost1}}<h3>
+    <h3>Location: {{Location1}}<h3>
+    <h3>Date Posted: {{date_post1}}<h3>
+    <form action="" method="post">
+      <input type="message1" placeholder="Message to Seller" name="message1" value="" min = "4" max = "100">
+      <button type="submit" name="submit1" value="submit1"> Buy This Drop </button>
+    </form>
+  </div>
+</div>
+{%endblock%}
