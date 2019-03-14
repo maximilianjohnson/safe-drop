@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5433/SafeDrop_Logins'
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -38,7 +38,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -135,22 +135,30 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/message/',  methods=['GET', 'POST'])
+@app.route('/active_drops/',  methods=['GET', 'POST'])
 @login_required
-def message_redirect():
-    if request.method == 'POST':
-        userentry = request.form['username']
-        currentuser = current_user.username
-        if len(userentry) > len(currentuser):
-            chatid = currentuser + "_" + userentry
-        else:
-            chatid = userentry + "_" + currentuser
-        return redirect(url_for('message', chat_id=chatid))
-    return render_template('message_redirect.html')
+def active_drops():
+    s_txid = search_OrderValue('TXID', S_username = current_user.username)
+    s_txids = []
+    s_len = len(s_txid)
+    for item in s_txid:
+        txid = str(item)
+        txid = txid[2:-3]
+        s_txids.append(txid)
+    b_txid = search_OrderValue('TXID', B_username = current_user.username)
+    b_txids = []
+    b_len = len(b_txid)
+    for item in b_txid:
+        txid = str(item)
+        txid = txid[2:-3]
+        b_txids.append(txid)
+    currentuser = current_user.username
+    return render_template('active_drops.html', s_len=s_len, s_txids=s_txids, \
+    b_len = b_len, b_txids = b_txids)
 
-@app.route('/message/<string:chat_id>_chat/', methods=['GET', 'POST'])
+@app.route('/active_drops/<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
-def message(chat_id):
+def transactionpage(chat_id):
     return render_template('message.html', currentuser = str(current_user.username), chatid = chat_id)
 
 def messageReceived(methods=['GET', 'POST']):
