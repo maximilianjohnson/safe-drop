@@ -1,25 +1,146 @@
-{%extends "index.html"%}
-{%block content%}
-<div class="new_drop">
-  <h1>Create a new SafeDrop</h1>
-  <h2>Please fill out the form below<h2>
-</div>
+<!DOCTYPE html>
+<html>
+
 <head>
-    <title>Signup page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  <title>New Drop</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/new_drop.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
 <body>
-  <div class="container">
-    <h1>Create New Drop Below</h1>
-    <br>
-    <form action="" method="post">
-      <input type="Item_name" placeholder="Item Name" name="Item_name" value="" max = "64" required>
-      <input type="Item_desc" placeholder="Item Description" name="Item_desc" value="" max = "500" required>
-      <input type="Item_cost" placeholder="Item Cost" name="Item_cost" value="" max = "6" required>
-      <input type="Location" placeholder="SafeDrop Location" name="Location" value="" max = "36" required>
-      <button type="submit"> Create New Drop </button>
-    </form>
+<!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <h1 class="title">SafeDrop</h1>
+  <div class="nav">
+    <p class="menu_title">Andrew Moreno</p>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="#">Profile</a>
+          <a class="dropdown" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="#">Browse</a>
+      <a href="#">Active Drops</a>
+      <a id="newdrop" href="#">New Drop</a>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="#">New Drop</a>
+          <a class="dropdown" href="#">Active Drops</a>
+          <a class="dropdown" href="#">Browse</a>
+          <a class="dropdown" href="#">Profile</a>
+          <a class="dropdown" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
   </div>
+
+
+<!-- This is the body of the webpage-->
+  <form action="" method="post" enctype="multipart/form-data">
+    <div class="drop_info">
+      <h2 class="newdrop_header">Drop Details</h2>
+      <table>
+        <tr>
+          <td>
+            <p>Title: </p>
+          </td>
+          <td>
+            <input type="text" name="Item_name" placeholder="Enter a title for your item..." required>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>
+            <p>Description: </p>
+          </td>
+          <td>
+            <textarea name="Item_desc" placeholder="Enter a description for your item..."></textarea>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>
+           <p>Location: </p>
+          </td>
+          <td>
+            <input type="text" name="Location" placeholder="Enter a title for your item..." required>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>
+            <p>Cost: $</p>
+          </td>
+          <td>
+            <input type="number" id="cost" name="Item_cost">
+          </td>
+        </tr>
+      </table>
+
+
+
+    </div>
+
+    <div class="drop_images">
+      <h2 class="newdrop_header">Drop Images</h2>
+
+      <div class="gallery">
+      </div>
+
+      <input id="file_explore" type="file" multiple id="gallery-photo-add" />
+
+    </div>
+
+    <div class="button">
+      <button class="post_button" type="submit" name="post">Post!</button>
+    </div>
+
+  </form>
+
+
+
+
+  <script type="text/javascript">
+    $(function() {
+      // Multiple images preview in browser
+      var imagesPreview = function(input, placeToInsertImagePreview) {
+
+        if (input.files) {
+          var filesAmount = input.files.length;
+
+          for (i = 0; i < filesAmount; i++) {
+            var reader = new FileReader();
+
+            reader.onload = function(event) {
+              $($.parseHTML('<img>')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
+            }
+
+            reader.readAsDataURL(input.files[i]);
+          }
+        }
+
+      };
+
+      $('#gallery-photo-add').on('change', function() {
+        imagesPreview(this, 'div.gallery');
+      });
+    });
+  </script>
 </body>
-{%endblock%}
+
+</html>

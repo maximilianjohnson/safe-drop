@@ -1,0 +1,25 @@
+{%extends "index.html"%}
+{%block content%}
+<div class="new_drop">
+  <h1>Create a new SafeDrop</h1>
+  <h2>Please fill out the form below<h2>
+</div>
+<head>
+    <title>Signup page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+  <div class="container">
+    <h1>Create New Drop Below</h1>
+    <br>
+    <form action="" method="post">
+      <input type="Item_name" placeholder="Item Name" name="Item_name" value="" max = "64" required>
+      <input type="Item_desc" placeholder="Item Description" name="Item_desc" value="" max = "500" required>
+      <input type="Item_cost" placeholder="Item Cost" name="Item_cost" value="" max = "6" required>
+      <input type="Location" placeholder="SafeDrop Location" name="Location" value="" max = "36" required>
+      <button type="submit"> Create New Drop </button>
+    </form>
+  </div>
+</body>
+{%endblock%}
