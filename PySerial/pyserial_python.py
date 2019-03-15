@@ -45,7 +45,6 @@ while cond == True:
         returned.append(var)
     try:
         checkVal = int(returned[0])
-        print(checkVal)
     except:
         print("You did not enter the correct number of values in the keypad.")
     if checkVal == len(code):
