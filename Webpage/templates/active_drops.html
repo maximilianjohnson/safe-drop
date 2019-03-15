@@ -16,10 +16,13 @@
       var id;
       var s_data = ({{ s_txids|tojson }});
       var b_data = ({{ b_txids|tojson }});
+      var s_name = ({{ s_names|tojson }});
+      var b_name = ({{ b_names|tojson }});
 
         {% for item in s_txids %}
+        i_name = s_name[i]
         i = i+1
-        data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Sale ' + i + '</a>' + '<br>');
+        data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Sale ' + i_name + '</a>' + '<br>');
         console.log(data)
         $("div.sell_linkies").append(data);
         {% endfor %}
@@ -33,8 +36,9 @@
       var i = 0;
 
       {% for item in b_txids %}
+      i_name = b_name[i]
       i = i+1
-      data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Buy ' + i + '</a>' + '<br>');
+      data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Buy ' + i_name + '</a>' + '<br>');
       console.log(data)
       $("div.buy_linkies").append(data);
       {% endfor %}

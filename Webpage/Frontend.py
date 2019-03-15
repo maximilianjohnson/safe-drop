@@ -25,12 +25,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
 from flask_socketio import SocketIO, join_room, leave_room, send
 from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer
+from chat_logs.chat_log import newMsg, searchMsg
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5432/SafeDrop_Logins'
+localhost:5433/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -38,7 +39,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -140,26 +141,41 @@ def logout():
 def active_drops():
     s_txid = search_OrderValue('TXID', S_username = current_user.username)
     s_txids = []
+    s_names = []
     s_len = len(s_txid)
     for item in s_txid:
         txid = str(item)
         txid = txid[2:-3]
         s_txids.append(txid)
+        s_names.append(search_OrderValue('I_name', txid=txid))
     b_txid = search_OrderValue('TXID', B_username = current_user.username)
     b_txids = []
     b_len = len(b_txid)
+    b_names = []
     for item in b_txid:
         txid = str(item)
         txid = txid[2:-3]
         b_txids.append(txid)
+        b_names.append(search_OrderValue('I_name', txid=txid))
     currentuser = current_user.username
     return render_template('active_drops.html', s_len=s_len, s_txids=s_txids, \
-    b_len = b_len, b_txids = b_txids)
+    b_len = b_len, b_txids = b_txids, s_names=s_names, b_names=b_names)
 
-@app.route('/active_drops/<string:chat_id>/', methods=['GET', 'POST'])
+@app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
-    return render_template('message.html', currentuser = str(current_user.username), chatid = chat_id)
+    item_name = search_OrderValue('I_name', txid = chat_id)
+    location = search_OrderValue('Location', txid = chat_id)
+    item_desc = search_OrderValue('description', txid = chat_id)
+    item_cost = search_OrderValue('Cost', txid = chat_id)
+    buy_user = search_OrderValue('B_username', txid = chat_id)
+    sell_user = search_OrderValue('S_username', txid = chat_id)
+    date_init = search_OrderValue('date_initialized', txid = chat_id)
+    oldMsg = searchMsg(chat_id)
+    return render_template('message.html', currentuser = \
+    str(current_user.username), chatid = chat_id, item_name=item_name,\
+    location = location, item_desc=item_desc, item_cost=item_cost,\
+    buy_user=buy_user, sell_user=sell_user, date_init=date_init,oldMsg = oldMsg)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
@@ -169,6 +185,17 @@ def handle_my_custom_event(data, methods=['GET', 'POST']):
     print('received my event: ' + str(data))
     room = data['room']
     join_room(room)
+
+    try:
+        msg = data['message']
+        Send_name = data['user_name']
+        txid = data['room']
+        B_name = search_OrderValue('B_username', txid = txid)
+        S_name = search_OrderValue('S_username', txid = txid)
+        newMsg(txid, B_name, S_name, Send_name, msg)
+    except KeyError:
+        pass
+
     socketio.emit('my response',  data, callback=messageReceived, room=room)
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
@@ -197,8 +224,10 @@ def browse():
         txid = str(search_OrderValue('TXID', recent = 0))
         sub = request.form.get("submit")
         if sub == 'submit':
-            request.form.get("message")
+            msg = request.form.get("message")
+            newMsg(txid, current_user.username, Sellername, current_user.username, msg)
             confirmBuyer(current_user.username, txid)
+            return(redirect(url_for('active_drops')))
         SellerName1 = str(search_OrderValue('S_username', recent = 1))
         ItemName1 = str(search_OrderValue('I_name', recent = 1))
         ItemDesc1 = str(search_OrderValue('description', recent = 1))
@@ -208,14 +237,10 @@ def browse():
         txid1 = str(search_OrderValue('TXID', recent = 1))
         sub1 = request.form.get("submit1")
         if sub1 == 'submit1':
-            request.form.get("message1")
+            msg = request.form.get("message1")
+            newMsg(txid1, current_user.username, SellerName1, current_user.username, msg)
             confirmBuyer(current_user.username, txid1)
-        return render_template("browse.html", SellerName=SellerName, \
-        ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, Location=Location,\
-        date_post=date_post, SellerName1=SellerName1, \
-        ItemName1=ItemName1, ItemDesc1=ItemDesc1, ItemCost1=ItemCost1, Location1=Location1,\
-        date_post1=date_post1)
-
+            return(redirect(url_for('active_drops')))
     else:
         SellerName = str(search_OrderValue('S_username', recent = 0))
         ItemName = str(search_OrderValue('I_name', recent = 0))
