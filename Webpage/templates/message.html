@@ -1,78 +1,129 @@
-{%extends "index.html"%}
-{%block content%}
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <title>SafeDrop Chat</title>
-  </head>
-  <body>
-    <div class = "order_info">
+<html>
 
-      <h1>{{sell_user}} is selling {{item_name}} to {{buy_user}}</h1>
-      <p><i>"{{item_desc}}"</i><p>
-      <p>Cost: {{item_cost}} Location: {{location}}<br></p>
-      <p><i>{{date_init}}</i><p>
+<head>
+  <title>New Drop</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/message.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+<!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <h1 class="title">SafeDrop</h1>
+  <div class="nav">
+    <p class="menu_title">Andrew Moreno</p>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="#">Profile</a>
+          <a class="dropdown" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="#">Browse</a>
+      <a href="#">Active Drops</a>
+      <a id="newdrop" href="#">New Drop</a>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="#">New Drop</a>
+          <a class="dropdown" href="#">Active Drops</a>
+          <a class="dropdown" href="#">Browse</a>
+          <a class="dropdown" href="#">Profile</a>
+          <a class="dropdown" href="#">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="messages_sec">
+      <h2 id="connected_to">
+        You have connected to Admin! Say something bitch
+      </h2>
+
+
+      <div class = "old_messages"></div>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript">
+      var msgdata = ({{ oldMsg|tojson }});
+      for (i = 0; i < msgdata.length; i++) {
+      dataset = msgdata[i]
+      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + ' at ' + dataset[6] + ' <br> ');
+      console.log(out)
+      $("div.old_messages").append(out);
+      }
+      </script>
+
+
+      <div class="message_holder"></div>
+
+      <form action="" method="POST">
+        <input type="text" class="message" placeholder="Messages"/>
+        <button id="send" type="submit" name="post">Send</button>
+      </form>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+      <script type="text/javascript">
+        var user_name = "{{currentuser}}"
+        var socket = io.connect();
+
+        socket.emit('join', {
+          username : '{{currentuser}}',
+          room : '{{chatid}}'
+        })
+
+        socket.on( 'connect', function(socketio) {
+          socket.emit( 'my event', {
+            data: 'User Connected',
+            room : '{{chatid}}'
+          } )
+          var form = $( 'form' ).on( 'submit', function( e ) {
+            e.preventDefault()
+            let user_input = $( 'input.message' ).val()
+            socket.emit( 'my event', {
+              user_name : user_name,
+              message : user_input,
+              room : '{{chatid}}'
+            } )
+            $( 'input.message' ).val( '' ).focus()
+          } )
+        } )
+
+        socket.on( 'my response', function( msg ) {
+          console.log( msg )
+          if( typeof msg.user_name !== 'undefined' ) {
+            $( 'h3' ).remove()
+            $( 'div.message_holder' ).append( '<div><b>'+msg.user_name+'</b> '+msg.message+'</div>' )
+          }
+        })
+      </script>
 
     </div>
 
-    <div class = "old_messages"></div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript">
-    var msgdata = ({{ oldMsg|tojson }});
-    for (i = 0; i < msgdata.length; i++) {
-    dataset = msgdata[i]
-    out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + ' at ' + dataset[6] + ' <br> ');
-    console.log(out)
-    $("div.old_messages").append(out);
-    }
-    </script>
-
-    <div class="message_holder"></div>
-
-    <form action="" method="POST">
-      <input type="text" class="message" placeholder="Messages"/>
-      <input type="submit"/>
-    </form>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-    <script type="text/javascript">
-      var user_name = "{{currentuser}}"
-      var socket = io.connect();
-
-      socket.emit('join', {
-        username : '{{currentuser}}',
-        room : '{{chatid}}'
-      })
-
-      socket.on( 'connect', function(socketio) {
-        socket.emit( 'my event', {
-          data: 'User Connected',
-          room : '{{chatid}}'
-        } )
-        var form = $( 'form' ).on( 'submit', function( e ) {
-          e.preventDefault()
-          let user_input = $( 'input.message' ).val()
-          socket.emit( 'my event', {
-            user_name : user_name,
-            message : user_input,
-            room : '{{chatid}}'
-          } )
-          $( 'input.message' ).val( '' ).focus()
-        } )
-      } )
-
-      socket.on( 'my response', function( msg ) {
-        console.log( msg )
-        if( typeof msg.user_name !== 'undefined' ) {
-          $( 'h3' ).remove()
-          $( 'div.message_holder' ).append( '<div><b>'+msg.user_name+'</b> '+msg.message+'</div>' )
-        }
-      })
-    </script>
-
-  </body>
-  </html>
-{%endblock%}
+    <label class="toggle2" for="toggle2">&#9432;</label>
+    <input type="checkbox" id="toggle2"/>
+    <div class="drop_info">
+      <h2 id="title">{{item_name}}</h2>
+      <pre id="description">{{item_desc}}</pre>
+      <div id="details">
+        <h3>Cost: ${{item_cost}}</h3>
+        <h3>Location: {{location}}</h3>
+        <h3>Date Posted: {{date_init}}</h3>
+      </div>
+    </div>
+  </div>

@@ -28,6 +28,8 @@
     height: calc(100% - 210px);
     margin: 25px 0px;
     overflow: auto;
+    font-family: 'Lato', sans-serif;
+    font-size: 17px;
 }
 
 #details {
@@ -36,7 +38,7 @@
     bottom: 10px;
 }
 
-.messages {
+.messages_sec {
     width: calc(75% - 75px);
     height: calc(100% - 30px);
     margin: 15px;
@@ -49,7 +51,7 @@
     text-align: center
 }
 
-#message_box {
+.message {
     position: absolute;
     bottom: 0px;
     display: inline-block;
@@ -93,7 +95,7 @@
         width: 250px
     }
 
-    .messages {
+    .messages_sec {
         width: calc(100% - 30px);
     }
 
