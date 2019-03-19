@@ -3,7 +3,7 @@ A program that creates an SQL database for new user profiles
 and adds new entries with this info:
 first name, last name, username, email, age, date joined, address, city,
 province, country, postal code, distance, txa, user_rating, status
-uses postgresql, currently localhost:5433
+uses postgresql, currently localhost:5432
 
 """
 #FOR PROTOTYPING ONLY, TO BE EXPANDED UPON FOR WEB INTEGRATION
@@ -20,7 +20,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 #function creates user profile database
 def create_up_db():
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS users (id SERIAL, \
                 first_name TEXT, last_name TEXT, user_name TEXT, \
@@ -38,7 +38,7 @@ def create_up_db():
 def insert_newprofile_up_db(fn, ln, un, em, age, ad, city, prov, ctry, pc):
     create_up_db()
     date = datetime.now()
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("INSERT INTO users VALUES(default, %s, %s, %s, %s, %s, %s, %s, %s,\
     %s, %s, %s, %s, %s, %s, %s)", (fn, ln, un, 'password_hash', em, age, date, ad, city,\
@@ -49,7 +49,7 @@ def insert_newprofile_up_db(fn, ln, un, em, age, ad, city, prov, ctry, pc):
 #command line view function for psycopg2 database
 def view():
     create_up_db()
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("SELECT * FROM users")
     rows = cur.fetchall()
@@ -59,7 +59,7 @@ def view():
 def search(fn="", ln="", un="", em="", age="", dj="", ad="", city="", prov="", \
            ctry="", pc="", dist="", txa="", ur="", status=""):
     create_up_db()
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("SELECT * FROM users WHERE first_name=%s OR last_name=%s OR \
                 user_name=%s OR email=%s OR age=%s OR date_joined=%s OR address=%s \
@@ -73,7 +73,7 @@ def search(fn="", ln="", un="", em="", age="", dj="", ad="", city="", prov="", \
 
 def search_value(column, user):
     create_up_db()
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     SQL = "SELECT " + column + " FROM users WHERE user_name=(%s)"
     data = (user,)
@@ -85,7 +85,7 @@ def search_value(column, user):
 #search_value('status', 'maximilianjohnson')
 
 def delete(id):
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("DELETE FROM users WHERE id=%s", (id,))
     conn.commit()
@@ -95,7 +95,7 @@ def update(fn, ln, un, ph, em, age, dj, ad, city, prov, ctry, pc, txa, ur, statu
     create_up_db()
     if ph != "":
         ph = generate_password_hash(ph)
-    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_Users' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur_conn.cursor()
     cur.execute("UPDATE users SET first_name=%s OR last_name=%s OR \
                 user_name=%s OR password_hash=%s OR email=%s OR \

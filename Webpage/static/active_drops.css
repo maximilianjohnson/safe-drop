@@ -1,0 +1,119 @@
+.active_drop {
+    text-align: center;
+}
+
+.container {
+    width: 41vw;
+    display: inline-block;
+    margin: 50px 3vw;
+}
+
+.main_header {
+    font-size: 37px;
+    padding: 10px;
+    border-bottom-style: solid;
+    border-width: 3px;
+    border-color: #000000;
+    text-align: center;
+}
+
+.posts {
+    margin: 25px 3.2%;
+    width: 93.6%;
+    height: 110px;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    display: inline-block;
+    float: left;
+    position: relative;
+}
+
+.post_title {
+    width: 85%;
+    height: 35px;
+    font-size: 30px;
+    position: absolute;
+    text-align: left;
+    margin: 5px 10px;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cost {
+    font-size: 20px;
+    position: absolute;
+    right: 0px;
+    margin: 15px 10px;
+    color: black;
+}
+
+.location {
+    width: 70%;
+    font-size: 20px;
+    position: absolute;
+    bottom: 3px;
+    left: 10px;
+    text-align: left;
+    color: #9c9c9c;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date {
+    font-size: 20px;
+    position: absolute;
+    bottom: 3px;
+    right: 10px;
+    color: #9c9c9c;
+    font-weight: 500;
+}
+
+.posts p {
+    font-size: 23px;
+    position: absolute;
+    top: 45px;
+    left: 9px;
+    font-weight: 300;
+    color: black;
+    width: 700px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 1300px) {
+    .post_title {
+        width: 75%;
+    }
+
+    .location {
+        width: 55%;
+    }
+}
+
+@media only screen and (max-width: 750px) {
+    #buy_drops {
+        width: 307.5px;
+        display:block;
+        margin: 50px auto;
+    }
+
+    #sell_drops {
+        width: 307.5px;
+        margin: 30px auto;
+    }
+
+    .post_title {
+        width: 75%;
+    }
+
+    .location {
+        width: 35%;
+    }
+}

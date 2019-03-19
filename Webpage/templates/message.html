@@ -1,40 +1,80 @@
-{%extends "index.html"%}
-{%block content%}
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <title>SafeDrop Chat</title>
-  </head>
-  <body>
-    <div class = "order_info">
+<html>
 
-      <h1>{{sell_user}} is selling {{item_name}} to {{buy_user}}</h1>
-      <p><i>"{{item_desc}}"</i><p>
-      <p>Cost: {{item_cost}} Location: {{location}}<br></p>
-      <p><i>{{date_init}}</i><p>
+<head>
+  <title>New Drop</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/message.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+</head>
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <h1 class="title">SafeDrop</h1>
+  <div class="nav">
+    <p class="menu_title">Andrew Moreno</p>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
     </div>
 
-    <div class = "old_messages"></div>
+    <div class="menu">
+      <a href="{{ url_for('browse') }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse') }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript">
-    var msgdata = ({{ oldMsg|tojson }});
-    for (i = 0; i < msgdata.length; i++) {
-    dataset = msgdata[i]
-    out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + ' at ' + dataset[6] + ' <br> ');
-    console.log(out)
-    $("div.old_messages").append(out);
-    }
-    </script>
+  <div class="container">
 
-    <div class="message_holder"></div>
+    <div class="messages_sec">
+      <h2 id="connected_to">
+        You have connected to Admin! Say something bitch
+      </h2>
 
-    <form action="" method="POST">
-      <input type="text" class="message" placeholder="Messages"/>
-      <input type="submit"/>
-    </form>
 
+      <div class = "old_messages"></div>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript">
+      var msgdata = ({{ oldMsg|tojson }});
+      for (i = 0; i < msgdata.length; i++) {
+      dataset = msgdata[i]
+      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + ' at ' + dataset[6] + ' <br> ');
+      console.log(out)
+      $("div.old_messages").append(out);
+      }
+      </script>
+
+
+      <div class="message_holder"></div>
+
+      <form action="" method="POST">
+        <input type="text" class="message" placeholder="Messages"/>
+        <button id="send" type="submit" name="post">Send</button>
+      </form>
+    </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
@@ -73,6 +113,20 @@
       })
     </script>
 
-  </body>
-  </html>
-{%endblock%}
+    <label class="toggle2" for="toggle2">&#9432;</label>
+    <input type="checkbox" id="toggle2"/>
+    <div class="drop_info">
+      <h2 id="title">{{item_name}}</h2>
+      <pre id="description">{{item_desc}}</pre>
+      <div id="details">
+        <h2>Cost: ${{item_cost}}</h3>
+        <h2>Location: {{location}}</h3>
+        <h2>Date Posted: {{date_init}}</h3>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
