@@ -1,0 +1,50 @@
+{%extends "index.html"%}
+{%block content%}
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>SafeDrop Active Drops</title>
+  </head>
+  <body>
+    <h3 style='color: #ccc;font-size: 30px;'>Sell Drops</h3>
+    <div>
+
+    <div class="sell_linkies"></div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript">
+      var i = 0;
+      var id;
+      var s_data = ({{ s_txids|tojson }});
+      var b_data = ({{ b_txids|tojson }});
+      var s_name = ({{ s_names|tojson }});
+      var b_name = ({{ b_names|tojson }});
+
+        {% for item in s_txids %}
+        i_name = s_name[i]
+        i = i+1
+        data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Sale ' + i_name + '</a>' + '<br>');
+        console.log(data)
+        $("div.sell_linkies").append(data);
+        {% endfor %}
+
+      </script>
+    </div>
+    <h3 style='color: #ccc;font-size: 30px;'>Buy Drops</h3>
+    <div class="buy_linkies">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript">
+      var i = 0;
+
+      {% for item in b_txids %}
+      i_name = b_name[i]
+      i = i+1
+      data = ('<a href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + 'Buy ' + i_name + '</a>' + '<br>');
+      console.log(data)
+      $("div.buy_linkies").append(data);
+      {% endfor %}
+
+      </script>
+    </div>
+  </body>
+  </html>
+{%endblock%}
