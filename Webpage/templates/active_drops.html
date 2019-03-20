@@ -64,7 +64,12 @@
               {% for item in b_txids %}
               i_name = b_name[i]
               i = i+1
-              data = ('<a class="posts" href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '"><h3 class="post_title">' + i_name + '</h3><h3 class="cost">' + '$690' + '</h3><p>Buying from ' + 'Admin' + '</p><h3 class="location">' + 'UBC' + '</h3><h3 class="date">' + 'February 31, 2019' + '</h3></a>');
+              data = ('<a class="posts" href="' +
+                "{{ url_for('transactionpage', chat_id = item)}}" +
+                '"><h3 class="post_title">' + i_name +
+                '</h3><h3 class="cost">' + '$690' + '</h3><p>Buying from ' +
+                'Admin' + '</p><h3 class="location">' + 'UBC' +
+                '</h3><h3 class="date">' + 'February 31, 2019' + '</h3></a>');
               console.log(data)
               $("div#buy_drops").append(data);
               {% endfor %}
@@ -81,7 +86,12 @@
             {% for item in s_txids %}
             i_name = s_name[i]
             i = i+1
-            data = ('<a class="posts" href="' + "{{ url_for('transactionpage', chat_id = item)}}" + '">' + '<h3 class="post_title">' + i_name + '</h3><h3 class="cost">$690</h3><p>Buying from Admin</p><h3 class="location">UBC</h3><h3 class="date">February 31, 2019</h3>' + '</a>');
+            data = ('<a class="posts" href="' +
+              "{{ url_for('transactionpage', chat_id = item)}}" +
+              '"><h3 class="post_title">' + i_name +
+              '</h3><h3 class="cost">' + '$690' + '</h3><p>Selling to ' +
+              'Admin' + '</p><h3 class="location">' + 'UBC' +
+              '</h3><h3 class="date">' + 'February 31, 2019' + '</h3></a>');
             console.log(data)
             $("div#sell_drops").append(data);
             {% endfor %}
