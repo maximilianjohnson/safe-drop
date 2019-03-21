@@ -1,31 +1,37 @@
-{%extends "index.html"%}
-{%block content%}
-<div class="browse">
-  <div class = "d1">
+<!DOCTYPE HTML>
+<body>
+  <div class="browse">
     <h1>Listed SafeDrop's</h1>
     <h3>Welcome, {{current_user.username}}. Here are the most recent SafeDrop's.<h3>
-    <h2>Seller Name: {{ SellerName }}</h2>
-    <h2>Item Name: {{ItemName}}<h2>
-    <h3>Item Desc: {{ItemDesc}}<h3>
-    <h3>Item Cost: {{ItemCost}}<h3>
-    <h3>Location: {{Location}}<h3>
-    <h3>Date Posted: {{date_post}}<h3>
-    <form action="" method="post">
-      <input type="message" placeholder="Message to Seller" name="message" value="" min = "4" max = "100">
-      <button type="submit" name="submit" value="submit"> Buy This Drop </button>
-    </form>
+    <div class = "available_drops"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    var i = 0;
+    var sellerNames = ({{SellerName|tojson}});
+    var itemNames = ({{ItemName|tojson}});
+    var itemDescs = ({{ItemDesc|tojson}});
+    var itemCosts = ({{ItemCost|tojson}});
+    var locations = ({{Location|tojson}});
+    var date_posts = ({{date_post|tojson}})
+
+          {% for item in txid %}
+          i_name = itemNames[i]
+          i_desc = itemDescs[i]
+          i_cost = itemCosts[i]
+          place = locations[i]
+          date_post = date_posts[i]
+
+          i = i+1
+          data = ('<a href="' + "{{ url_for('buypage', txid = item)}}"
+                +'" class="posts">'+ '<img src="../placeholder.png" alt="petey parkey">' +
+                '<h3 class="post_title">' + i_name +'</h3><h3 class="cost">' +
+                i_cost+'</h3><h3 class="desc">'+i_desc+'</h3><h3 class="location">'+
+                place +'</h3><h3 class="date">'+date_post+'</h3><br>');
+          console.log(data)
+          $("div.available_drops").append(data);
+          {% endfor %}
+
+    </script>
   </div>
-  <div class = "d2">
-    <h2>Seller Name: {{ SellerName1 }}</h2>
-    <h2>Item Name: {{ItemName1}}<h2>
-    <h3>Item Desc: {{ItemDesc1}}<h3>
-    <h3>Item Cost: {{ItemCost1}}<h3>
-    <h3>Location: {{Location1}}<h3>
-    <h3>Date Posted: {{date_post1}}<h3>
-    <form action="" method="post">
-      <input type="message1" placeholder="Message to Seller" name="message1" value="" min = "4" max = "100">
-      <button type="submit" name="submit1" value="submit1"> Buy This Drop </button>
-    </form>
-  </div>
-</div>
-{%endblock%}
+</body>

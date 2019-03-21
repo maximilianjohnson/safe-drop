@@ -26,7 +26,7 @@
     </div>
 
     <div class="menu">
-      <a href="{{ url_for('browse') }}">Browse</a>
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
       <a href="{{ url_for('active_drops') }}">Active Drops</a>
       <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
       <p class="menu_title">{{FirstName}} {{LastName}}</p>
@@ -38,7 +38,7 @@
         <li>
           <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
           <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
-          <a class="dropdown" href="{{ url_for('browse') }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
           <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
           <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
         </li>

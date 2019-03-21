@@ -1,0 +1,16 @@
+{%extends "index.html"%}
+{%block content%}
+<!DOCTYPE HTML>
+<div class="posting">
+  <h1>{{SellerName}} is selling {{i_name}}</h1>
+  <h3>Item Description: {{i_desc}}</h3>
+  <h3>Cost: {{i_cost}}</h3>
+  <h3>Location {{location}}</h3>
+
+    <form action="" method="POST">
+      <input type="text" class="message" placeholder="Send a message to the seller!"/>
+      <button id="submit" type="submit" name="submit">Buy {{i_name}}</button>
+    </form>
+
+</div>
+{%endblock%}
