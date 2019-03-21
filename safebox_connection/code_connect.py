@@ -88,6 +88,18 @@ def attemptCode(code, txid):
     conn.commit()
     conn.close()
 
+def writeToScaleDoor(txid, door_status = None, scale_status = None):
+    connect_codelog()
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    cur=conn.cursor()
+    if door_status != None:
+        cur.execute("UPDATE codelog SET door_status=%s WHERE TXID=%s", (door_status, txid))
+    if scale_status != None:
+        cur.execute("UPDATE codelog SET scale_status=%s WHERE TXID=%s", (scale_status, txid))
+    conn.commit()
+    conn.close()
+
+
 #result = def boxResult()
 def accessSet(result, txid):
     connect_codelog()
