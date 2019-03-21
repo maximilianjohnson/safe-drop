@@ -24,7 +24,7 @@ from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
 from flask_socketio import SocketIO, join_room, leave_room, send
-from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate
+from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent
 from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 
@@ -32,7 +32,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5433/SafeDrop_Logins'
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -40,7 +40,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -316,63 +316,65 @@ def new_drop():
         I_desc = request.form["Item_desc"]
         Location = request.form["Location"]
         S_name = current_user.username
-        B_name = None
+        B_name = 'None'
         newOrder(S_name, B_name, I_name, I_desc, I_cost, Location)
     return render_template("new_drop.html", FirstName = FirstName,\
         LastName = LastName)
 
-
-@app.route('/browse/', methods=['GET', 'POST'])
-def browse():
+@app.route('/buy_<string:txid>', methods=['GET', 'POST'])
+@login_required
+def buypage(txid):
     if request.method=='POST':
-        SellerName = str(search_OrderValue('S_username', recent = 0))
-        ItemName = str(search_OrderValue('I_name', recent = 0))
-        ItemDesc = str(search_OrderValue('description', recent = 0))
-        ItemCost = str(search_OrderValue('Cost', recent = 0))
-        Location = str(search_OrderValue('Location', recent = 0))
-        date_post = str(search_OrderValue('date_initialized', recent = 0))
-        txid = str(search_OrderValue('TXID', recent = 0))
+        SellerName = str(search_OrderValue('S_username', txid=txid))
         sub = request.form.get("submit")
         if sub == 'submit':
             msg = request.form.get("message")
             newMsg(txid, current_user.username, SellerName, current_user.username, msg)
             confirmBuyer(current_user.username, txid)
             return(redirect(url_for('active_drops')))
-        SellerName1 = str(search_OrderValue('S_username', recent = 1))
-        ItemName1 = str(search_OrderValue('I_name', recent = 1))
-        ItemDesc1 = str(search_OrderValue('description', recent = 1))
-        ItemCost1 = str(search_OrderValue('Cost', recent = 1))
-        Location1 = str(search_OrderValue('Location', recent = 1))
-        date_post1 = str(search_OrderValue('date_initialized', recent = 1))
-        txid1 = str(search_OrderValue('TXID', recent = 1))
-        sub1 = request.form.get("submit1")
-        if sub1 == 'submit1':
-            msg = request.form.get("message1")
-            newMsg(txid1, current_user.username, SellerName1, current_user.username, msg)
-            confirmBuyer(current_user.username, txid1)
-            return(redirect(url_for('active_drops')))
     else:
-        SellerName = str(search_OrderValue('S_username', recent = 0))
-        ItemName = str(search_OrderValue('I_name', recent = 0))
-        ItemDesc = str(search_OrderValue('description', recent = 0))
-        ItemCost = str(search_OrderValue('Cost', recent = 0))
-        Location = str(search_OrderValue('Location', recent = 0))
-        date_post = str(search_OrderValue('date_initialized', recent = 0))
-        txid = str(search_OrderValue('TXID', recent = 0))
-        SellerName1 = str(search_OrderValue('S_username', recent = 1))
-        ItemName1 = str(search_OrderValue('I_name', recent = 1))
-        ItemDesc1 = str(search_OrderValue('description', recent = 1))
-        ItemCost1 = str(search_OrderValue('Cost', recent = 1))
-        Location1 = str(search_OrderValue('Location', recent = 1))
-        date_post1 = str(search_OrderValue('date_initialized', recent = 1))
-        txid1 = str(search_OrderValue('TXID', recent = 1))
+        item_name = search_OrderValue('I_name', txid = txid)
+        location = search_OrderValue('Location', txid = txid)
+        item_desc = search_OrderValue('description', txid = txid)
+        item_cost = search_OrderValue('Cost', txid = txid)
+        SellerName = search_OrderValue('S_username', txid=txid)
+        return render_template("buyPage.html", i_name = item_name,\
+        location = location, i_desc = item_desc, i_cost = item_cost,\
+        SellerName = SellerName)
 
-        return render_template("browse.html", SellerName=SellerName, \
-            ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
-            Location=Location, date_post=date_post, SellerName1=SellerName1, \
-            ItemName1=ItemName1, ItemDesc1=ItemDesc1, ItemCost1=ItemCost1, \
-            Location1=Location1, date_post1=date_post1)
 
+
+@app.route('/browse_<int:page_id>/')
+def browse(page_id):
+
+    SellerName = []
+    ItemName = []
+    ItemDesc = []
+    ItemCost = []
+    Location = []
+    date_post = []
+    txid = []
+
+    load_start = (page_id - 1)*10
+    load_pages = []
+    load_txids = browseRecent()
+
+    load_pages = load_txids[load_start:(load_start+10)]
+    for item in load_pages:
+        if item[3] != None:
+            SellerName.append(item[3])
+            ItemName.append(item[4])
+            ItemDesc.append(item[5])
+            ItemCost.append(item[7])
+            Location.append(item[8])
+            date_post.append(item[6])
+            txid.append(item)
+
+        else:
+            pass
+    return render_template("browse.html", SellerName=SellerName, \
+        ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
+        Location=Location, date_post=date_post, txid=txid)
 
 
 if __name__ == '__main__':
