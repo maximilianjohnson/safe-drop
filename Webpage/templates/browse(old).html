@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<body>
+  <div class="browse">
+    <h1>Listed SafeDrop's</h1>
+    <h3>Welcome, {{current_user.username}}. Here are the most recent SafeDrop's.<h3>
+    <div class = "available_drops"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    var i = 0;
+    var sellerNames = ({{SellerName|tojson}});
+    var itemNames = ({{ItemName|tojson}});
+    var itemDescs = ({{ItemDesc|tojson}});
+    var itemCosts = ({{ItemCost|tojson}});
+    var locations = ({{Location|tojson}});
+    var date_posts = ({{date_post|tojson}})
+
+          {% for item in txid %}
+          i_name = itemNames[i]
+          i_desc = itemDescs[i]
+          i_cost = itemCosts[i]
+          place = locations[i]
+          date_post = date_posts[i]
+
+          i = i+1
+          data = ('<a href="' + "{{ url_for('buypage', txid = item)}}"
+                +'" class="posts">'+ '<img src="../placeholder.png" alt="petey parkey">' +
+                '<h3 class="post_title">' + i_name +'</h3><h3 class="cost">' +
+                i_cost+'</h3><h3 class="desc">'+i_desc+'</h3><h3 class="location">'+
+                place +'</h3><h3 class="date">'+date_post+'</h3><br>');
+          console.log(data)
+          $("div.available_drops").append(data);
+          {% endfor %}
+
+    </script>
+  </div>
+</body>

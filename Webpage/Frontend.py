@@ -324,6 +324,9 @@ def new_drop():
 @app.route('/buy_<string:txid>', methods=['GET', 'POST'])
 @login_required
 def buypage(txid):
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
+
     if request.method=='POST':
         SellerName = str(search_OrderValue('S_username', txid=txid))
         sub = request.form.get("submit")
@@ -338,14 +341,17 @@ def buypage(txid):
         item_desc = search_OrderValue('description', txid = txid)
         item_cost = search_OrderValue('Cost', txid = txid)
         SellerName = search_OrderValue('S_username', txid=txid)
-        return render_template("buyPage.html", i_name = item_name,\
-        location = location, i_desc = item_desc, i_cost = item_cost,\
-        SellerName = SellerName)
+        return render_template("buyPage.html", FirstName = FirstName, \
+            LastName = LastName, i_name = item_name,\
+            location = location, i_desc = item_desc, i_cost = item_cost,\
+            SellerName = SellerName)
 
 
 
 @app.route('/browse_<int:page_id>/')
 def browse(page_id):
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
 
     SellerName = []
     ItemName = []
@@ -368,11 +374,12 @@ def browse(page_id):
             ItemCost.append(item[7])
             Location.append(item[8])
             date_post.append(item[6])
-            txid.append(item)
+            txid.append(item[1])
 
         else:
             pass
-    return render_template("browse.html", SellerName=SellerName, \
+    return render_template("browse.html", FirstName = FirstName, \
+        LastName = LastName, SellerName=SellerName, \
         ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
         Location=Location, date_post=date_post, txid=txid)
 

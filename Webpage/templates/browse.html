@@ -1,9 +1,59 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>New Drop</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/browse.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
 <body>
-  <div class="browse">
-    <h1>Listed SafeDrop's</h1>
-    <h3>Welcome, {{current_user.username}}. Here are the most recent SafeDrop's.<h3>
-    <div class = "available_drops"></div>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <h1 class="title">SafeDrop</h1>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <form id="search_container" action="" method="post">
+      <input id="search"type="text" name="Search" placeholder="Search!" required>
+  </form>
+
+
+  <div class="browse_main"></div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript">
@@ -23,15 +73,26 @@
           date_post = date_posts[i]
 
           i = i+1
-          data = ('<a href="' + "{{ url_for('buypage', txid = item)}}"
-                +'" class="posts">'+ '<img src="../placeholder.png" alt="petey parkey">' +
-                '<h3 class="post_title">' + i_name +'</h3><h3 class="cost">' +
-                i_cost+'</h3><h3 class="desc">'+i_desc+'</h3><h3 class="location">'+
-                place +'</h3><h3 class="date">'+date_post+'</h3><br>');
+          data = ('<a href="' + "{{ url_for('buypage', txid = item)}}" +
+                '"class="posts">' + '<div id="img_container">' +
+                '<img src="https://i.redd.it/vwlsi8ctp9721.jpg" alt="petey parkey"></div>' +
+                '<h3 id="post_title">' + i_name +'</h3><h3 id="cost">$' +
+                i_cost +'</h3><h3 id="desc">'+ i_desc +'</h3><h3 id="location">'+
+                place +'</h3><h3 id="date">'+ date_post +'</h3></a><br>');
           console.log(data)
-          $("div.available_drops").append(data);
+          $("div.browse_main").append(data);
           {% endfor %}
 
     </script>
+
+  <div id="page_container">
+    <a href="#" class="page" id="page_1">1</a>
+    <a href="#" class="page">2</a>
+    <a href="#" class="page">3</a>
+    <a href="#" class="page">4</a>
+    <a href="#" class="page">5</a>
   </div>
+
 </body>
+
+</html>

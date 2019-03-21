@@ -1,0 +1,183 @@
+.browse_main {
+    text-align: center;
+}
+
+.posts {
+    margin: 25px 3.2% 0px;
+    width: 75%;
+    height: 180px;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    display: inline-block;
+    position: relative;
+}
+
+#img_container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin: 14px;
+    text-align: center;
+    line-height: 150px;
+    border: 1px solid #e1e1e1;
+}
+
+#img_container img {
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    vertical-align: middle;
+
+}
+
+#post_title {
+    width: calc(100% - 250px);
+    height: 35px;
+    font-size: 28px;
+    position: absolute;
+    left: 162px;
+    text-align: left;
+    margin: 7px 10px;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#desc {
+    white-space: pre-line;
+    font-family: 'Lato', sans-serif;
+    font-size: 17px;
+    position: absolute;
+    top: 40px;
+    left: 173px;
+    font-weight: 300;
+    line-height: 26px;
+    color: black;
+    width: calc(100% - 350px);
+    height: 128px;
+    text-align: left;
+    /* only works for chrome*/
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+}
+
+#cost {
+    font-size: 22px;
+    position: absolute;
+    right: 0px;
+    margin: 13px 13px;
+    color: black;
+}
+
+#location {
+    font-size: 20px;
+    position: absolute;
+    bottom: 35px;
+    right: 10px;
+    text-align: left;
+    color: #9c9c9c;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#date {
+    font-size: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: #9c9c9c;
+    font-weight: 500;
+}
+
+#waitlist {
+    font-size: 20px;
+    position: absolute;
+    bottom: 60px;
+    right: 10px;
+    color: #9c9c9c;
+    font-weight: 500;
+}
+
+#search_container {
+    text-align: center;
+}
+
+#search {
+    width: 400px;
+    border: 1px solid #cfcfcf;
+    background-color: white;
+    border-radius: 6px;
+    outline: none;
+    padding: 6px 7px 5px 7px;
+    margin-top: 20px;
+    font-size: 17px;
+    font-family: 'Lato', sans-serif;
+}
+
+#page_container {
+    background: white;
+    text-align: center;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+    height: 30px;
+    margin-top: 40px;
+    border-radius: 7px;
+
+}
+
+.page {
+    display: inline-block;
+    margin: 0px -1.5px;
+    padding: 5px;
+    height: 20px;
+    width: 20px;
+    text-decoration: none;
+    color: black;
+    border-left: 0.5px solid;
+}
+
+#page_1 {
+    border-style: none;
+}
+
+@media only screen and (max-width: 750px) {
+    #desc {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 550px) {
+    #post_title {
+        left: 0px;
+        width: calc(100% - 120px);
+    }
+
+    #desc {
+        display: none;
+    }
+
+    #img_container {
+        bottom: 0px;
+        line-height: 115px;
+        border: 1px solid #e1e1e1;
+        margin-top: 45px;
+    }
+
+    #img_container img {
+        max-width: 115px;
+        max-height: 115px;
+        width: auto;
+        height: auto;
+        vertical-align: middle;
+
+    }
+
+}
