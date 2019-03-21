@@ -127,8 +127,8 @@ def profile():
     user_rating = str(search_value('user_rating', current_user.username))
     status = search_value('status', current_user.username)
     return render_template("profile.html", FirstName=FirstName, \
-    LastName=LastName, Age=Age, Email=Email, date_joined=date_joined, \
-    Address=Address, user_rating=user_rating, status=status)
+        LastName=LastName, Age=Age, Email=Email, date_joined=date_joined, \
+        Address=Address, user_rating=user_rating, status=status)
 
 @app.route('/logout/')
 @login_required
@@ -139,6 +139,9 @@ def logout():
 @app.route('/active_drops/',  methods=['GET', 'POST'])
 @login_required
 def active_drops():
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
+
     s_txid = search_OrderValue('TXID', S_username = current_user.username)
     s_txids = []
     s_names = []
@@ -158,12 +161,16 @@ def active_drops():
         b_txids.append(txid)
         b_names.append(search_OrderValue('I_name', txid=txid))
     currentuser = current_user.username
-    return render_template('active_drops.html', s_len=s_len, s_txids=s_txids, \
-    b_len = b_len, b_txids = b_txids, s_names=s_names, b_names=b_names)
+    return render_template('active_drops.html', FirstName=FirstName, \
+        LastName = LastName, s_len=s_len, s_txids=s_txids, \
+        b_len = b_len, b_txids = b_txids, s_names=s_names, b_names=b_names)
 
 @app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
+
     item_name = search_OrderValue('I_name', txid = chat_id)
     location = search_OrderValue('Location', txid = chat_id)
     item_desc = search_OrderValue('description', txid = chat_id)
@@ -172,10 +179,11 @@ def transactionpage(chat_id):
     sell_user = search_OrderValue('S_username', txid = chat_id)
     date_init = search_OrderValue('date_initialized', txid = chat_id)
     oldMsg = searchMsg(chat_id)
-    return render_template('message.html', currentuser = \
-    str(current_user.username), chatid = chat_id, item_name=item_name,\
-    location = location, item_desc=item_desc, item_cost=item_cost,\
-    buy_user=buy_user, sell_user=sell_user, date_init=date_init,oldMsg = oldMsg)
+    return render_template('message.html', FirstName = FirstName,\
+        LastName = LastName, currentuser = str(current_user.username),\
+        chatid = chat_id, item_name=item_name,location = location,\
+        item_desc=item_desc, item_cost=item_cost, buy_user=buy_user,\
+        sell_user=sell_user, date_init=date_init, oldMsg = oldMsg)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
@@ -201,6 +209,9 @@ def handle_my_custom_event(data, methods=['GET', 'POST']):
 @app.route('/new_drop/', methods=['GET', 'POST'])
 @login_required
 def new_drop():
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
+
     if request.method=='POST':
         I_name = request.form["Item_name"]
         I_cost = request.form["Item_cost"]
@@ -209,7 +220,8 @@ def new_drop():
         S_name = current_user.username
         B_name = None
         newOrder(S_name, B_name, I_name, I_desc, I_cost, Location)
-    return render_template("new_drop.html")
+    return render_template("new_drop.html", FirstName = FirstName,\
+        LastName = LastName)
 
 
 @app.route('/browse/', methods=['GET', 'POST'])
@@ -258,10 +270,10 @@ def browse():
         txid1 = str(search_OrderValue('TXID', recent = 1))
 
         return render_template("browse.html", SellerName=SellerName, \
-        ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, Location=Location,\
-        date_post=date_post, SellerName1=SellerName1, \
-        ItemName1=ItemName1, ItemDesc1=ItemDesc1, ItemCost1=ItemCost1, Location1=Location1,\
-        date_post1=date_post1)
+            ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
+            Location=Location, date_post=date_post, SellerName1=SellerName1, \
+            ItemName1=ItemName1, ItemDesc1=ItemDesc1, ItemCost1=ItemCost1, \
+            Location1=Location1, date_post1=date_post1)
 
 
 
