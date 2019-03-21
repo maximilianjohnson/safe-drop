@@ -24,14 +24,15 @@ from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
 from flask_socketio import SocketIO, join_room, leave_room, send
-from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer
+from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate
 from chat_logs.chat_log import newMsg, searchMsg
+from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5432/SafeDrop_Logins'
+localhost:5433/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -39,7 +40,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -168,9 +169,10 @@ def active_drops():
 @app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
-    FirstName = str(search_value('first_name', str(current_user.username)))
-    LastName = str(search_value('last_name', current_user.username))
-
+    request_code = url_for('boxUse', chat_id = chat_id)
+    code_msg = 'Confirm Sale.'
+    if search_OrderValue('status', txid = chat_id) == "Buyer_Seller_TX_Confirm":
+        code_msg = 'Request Box Access Code'
     item_name = search_OrderValue('I_name', txid = chat_id)
     location = search_OrderValue('Location', txid = chat_id)
     item_desc = search_OrderValue('description', txid = chat_id)
@@ -179,11 +181,11 @@ def transactionpage(chat_id):
     sell_user = search_OrderValue('S_username', txid = chat_id)
     date_init = search_OrderValue('date_initialized', txid = chat_id)
     oldMsg = searchMsg(chat_id)
-    return render_template('message.html', FirstName = FirstName,\
-        LastName = LastName, currentuser = str(current_user.username),\
-        chatid = chat_id, item_name=item_name,location = location,\
-        item_desc=item_desc, item_cost=item_cost, buy_user=buy_user,\
-        sell_user=sell_user, date_init=date_init, oldMsg = oldMsg)
+    return render_template('message.html', currentuser = \
+    str(current_user.username), chatid = chat_id, item_name=item_name,\
+    location = location, item_desc=item_desc, item_cost=item_cost,\
+    buy_user=buy_user, sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
+    request_code = request_code, code_msg = code_msg)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
@@ -205,6 +207,67 @@ def handle_my_custom_event(data, methods=['GET', 'POST']):
         pass
 
     socketio.emit('my response',  data, callback=messageReceived, room=room)
+
+
+@app.route('/<string:chat_id>_box_use/', methods=['GET', 'POST'])
+@login_required
+def boxUse(chat_id):
+    if request.method=='POST':
+        item = search_OrderValue('I_name', txid = chat_id)
+
+        sub = request.form.get("submit")
+        if sub == 'submit':
+            tx_status = dropStatus(chat_id, current_user.username, status = True)
+            confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
+
+            statusUpdate(tx_status, chat_id)
+
+            if tx_status == "Buyer_Seller_TX_Confirm":
+                newBoxAssignment(chat_id, "UBC ESC")
+
+            return redirect(url_for('boxUse', chat_id = chat_id))
+
+        sub1 = request.form.get("submit1")
+        if sub1 == 'submit1':
+            confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
+            codeView = requestCode(chat_id, current_user.username)
+            return render_template("boxUse.html", code = codeView, item = item,\
+            confirm_msg = confirm_msg)
+
+        #to simulate access code
+        sub2 = request.form.get("submit2")
+        if sub2 == 'submit2':
+            confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
+            code = request.form.get("message")
+            attemptCode(code, chat_id)
+            print(codeResult(chat_id))
+            result = codeResult(chat_id)
+            print(result)
+
+            return render_template("boxUse.html", code = 'Code Attemped.', item = item,\
+            confirm_msg = confirm_msg, result=result)
+
+
+    else:
+        b_user = search_OrderValue('B_username', txid = chat_id)
+        s_user = search_OrderValue('S_username', txid = chat_id)
+        confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
+        stage = search_ChatValue('stage', chat_id)
+        if stage == "Buyer Access" and current_user.username == b_user:
+            code_msg = "Request Box Access Code"
+        elif stage == "Seller Access" and current_user.username == s_user:
+            code_msg = "Request Box Access Code"
+        elif stage == "Buyer Access" and current_user.username == s_user:
+            code_msg = "Item successfully dropped!"
+        elif stage == "Seller Access" and current_user.username == b_user:
+            code_msg = "Awaiting seller drop..."
+        else:
+            code_msg = 'Confirm transaction before requesting an access code.'
+        item = search_OrderValue('I_name', txid = chat_id)
+        return render_template("boxUse.html",code = code_msg, item = item,\
+        confirm_msg = confirm_msg)
+
+
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
 @login_required
@@ -237,7 +300,7 @@ def browse():
         sub = request.form.get("submit")
         if sub == 'submit':
             msg = request.form.get("message")
-            newMsg(txid, current_user.username, Sellername, current_user.username, msg)
+            newMsg(txid, current_user.username, SellerName, current_user.username, msg)
             confirmBuyer(current_user.username, txid)
             return(redirect(url_for('active_drops')))
         SellerName1 = str(search_OrderValue('S_username', recent = 1))
