@@ -52,4 +52,9 @@ while cond == True:
         print ("The scale is now active.")
     else:
         print ("This code is not correct.")
+    scaleVals = []
+    while ser.inWaiting():
+        var = ser.readline()[0:1]
+        var = var.decode('utf-8')
+        scaleVals.append(var)
     cond = False
