@@ -87,6 +87,10 @@
     display: none;
 }
 
+#buttonconfirm {
+  padding: 10px;
+}
+
 #toggle2 {
     display: none;
 }
