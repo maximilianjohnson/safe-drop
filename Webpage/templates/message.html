@@ -118,13 +118,15 @@
     <label class="toggle2" for="toggle2">&#9432;</label>
     <input type="checkbox" id="toggle2"/>
     <div class="drop_info">
-      <a href="{{request_code}}">{{code_msg}}</a>
-      <form action="" method="post">
-        <button type="submit1" name="submit1" value="submit1"> {{confirm_msg}} </button>
-      </form>
+
       <h2 id="title">{{item_name}}</h2>
+
       <pre id="description">{{item_desc}}</pre>
+
       <div id="details">
+
+        <a href="{{request_code}}">{{code_msg}}</a>
+
         <h2>Cost: ${{item_cost}}</h3>
         <h2>Location: {{location}}</h3>
         <h2>Date Posted: {{date_init}}</h3>

@@ -201,11 +201,30 @@ def active_drops():
         , b_date = b_date, a_price = a_price, a_location = a_location\
         , a_date = a_date, a_txids=a_txids, a_names=a_names)
 
+
+@app.route('/active_drops_<string:chat_id>_confirm/')
+@login_required
+def confirmTX(chat_id):
+    #dropStatus updates as per current values
+    tx_status = dropStatus(chat_id, current_user.username, status = True)
+    order_status = search_OrderValue('status', txid = chat_id)
+
+    if order_status != "Buyer_Seller_TX_Confirm":
+        statusUpdate(tx_status, chat_id)
+        return redirect(url_for('transactionpage', chat_id = chat_id))
+
+    if order_status == "Buyer_Seller_TX_Confirm":
+        newBoxAssignment(chat_id, "UBC ESC")
+        return redirect(url_for('boxUse', chat_id = chat_id))
+
+
+
 @app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
-    request_code = url_for('boxUse', chat_id = chat_id)
-    code_msg = 'Confirm Sale.'
+
+    request_code = url_for('confirmTX', chat_id = chat_id)
+    code_msg = dropStatus(chat_id, current_user.username, msg = True)
     if search_OrderValue('status', txid = chat_id) == "Buyer_Seller_TX_Confirm":
         code_msg = 'Request Box Access Code'
     item_name = search_OrderValue('I_name', txid = chat_id)
@@ -252,18 +271,6 @@ def boxUse(chat_id):
 
         sub = request.form.get("submit")
         if sub == 'submit':
-            tx_status = dropStatus(chat_id, current_user.username, status = True)
-            confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
-
-            statusUpdate(tx_status, chat_id)
-
-            if tx_status == "Buyer_Seller_TX_Confirm":
-                newBoxAssignment(chat_id, "UBC ESC")
-
-            return redirect(url_for('boxUse', chat_id = chat_id))
-
-        sub1 = request.form.get("submit1")
-        if sub1 == 'submit1':
             confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
             codeView = requestCode(chat_id, current_user.username)
             return render_template("boxUse.html", code = codeView, item = item,\
@@ -378,7 +385,7 @@ def browse(page_id):
 
         else:
             pass
-    return render_template("browse.html", FirstName = FirstName, \
+        return render_template("browse.html", FirstName = FirstName, \
         LastName = LastName, SellerName=SellerName, \
         ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
         Location=Location, date_post=date_post, txid=txid)
