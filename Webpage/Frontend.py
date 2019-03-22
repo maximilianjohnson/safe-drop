@@ -24,7 +24,7 @@ from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
 from flask_socketio import SocketIO, join_room, leave_room, send
-from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent
+from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent, search_allOrders
 from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 
@@ -32,7 +32,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5432/SafeDrop_Logins'
+localhost:5433/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -40,7 +40,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -353,6 +353,42 @@ def buypage(txid):
             location = location, i_desc = item_desc, i_cost = item_cost,\
             SellerName = SellerName)
 
+
+@app.route('/history/',  methods=['GET', 'POST'])
+@login_required
+def history():
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
+
+    h_txid = search_allOrders(SUN = current_user.username, BUN = current_user.username)
+    h_txids = []
+    b_names = []
+    s_names = []
+    h_item = []
+    h_price = []
+    h_location = []
+    h_date_open = []
+    h_date_close = []
+    h_status = []
+    h_url = []
+    for item in h_txid:
+        txid = str(item)
+        txid = txid[2:-3]
+        h_txids.append(str(item[1]))
+        b_names.append(str(item[2]))
+        s_names.append(item[3])
+        h_item.append(item[4])
+        h_price.append(item[7])
+        h_location.append(item[8])
+        h_date_open.append(item[6])
+        h_date_close.append(str(item[12]))
+        h_status.append(item[9])
+        h_url.append(item[10])
+    currentuser = current_user.username
+    return render_template('history.html', FirstName=FirstName, currentuser=currentuser, \
+        LastName = LastName, h_txids=h_txids, b_names=b_names, s_names=s_names,\
+        h_item=h_item, h_price=h_price, h_location=h_location, h_url=h_url,\
+        h_date_open=h_date_open, h_date_close=h_date_close, h_status=h_status)
 
 
 @app.route('/browse_<int:page_id>/')

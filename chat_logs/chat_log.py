@@ -16,7 +16,7 @@ from datetime import datetime
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
 def connect_chatlog():
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS chatlog (id SERIAL, TXID TEXT, \
                  B_username TEXT, S_username TEXT, Sender_username TEXT,\
@@ -30,7 +30,7 @@ def connect_chatlog():
 #Function uses values to add new order to psycopg2 database
 def newMsg(txid, B_username, S_username, Send_username, msg):
     connect_chatlog()
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     msg_date = str(datetime.now())
     cur.execute("INSERT INTO chatlog VALUES(default, %s, %s, %s, %s, %s, %s)", \
@@ -40,7 +40,7 @@ def newMsg(txid, B_username, S_username, Send_username, msg):
 
 def searchMsg(TXID):
     connect_chatlog()
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     cur.execute("SELECT * FROM chatlog WHERE TXID=%s", (TXID,))
     rows = cur.fetchall()
