@@ -1,0 +1,96 @@
+#container {
+    width: 100vw;
+    height: calc(100vh - 75px);
+    text-align: center;
+
+}
+
+#container_dos {
+    margin-top: 50px;
+    text-align: left;
+    display: inline-block;
+}
+
+#post_title {
+    float: left;
+    font-size: 45px;
+    width: 1000px;
+}
+
+#img_container {
+    line-height: 150px;
+    border: 1px solid #e1e1e1;
+    margin-top: 25px;
+}
+
+#img_container img {
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+#details {
+   position: relative;
+}
+
+#desc_info {
+    background: white;
+    border-radius: 7px;
+    width: 770px;
+    height: 400px;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+#desc_title {
+    margin: 10px;
+    font-size: 30px;
+}
+
+#desc {
+    margin: 13px;
+    font-family: 'Lato', sans-serif;
+    font-size: 18px;
+    width: 750px;
+    height: 328px;
+    white-space: pre-line;
+}
+
+#non_desc {
+    background: white;
+    border-radius: 7px;
+    font-size: 18px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    margin: 20px 10px;
+    padding: 15px;
+    width: 180px;
+    line-height: 30px;
+    font-weight: 300;
+}
+
+#non_desc_title {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+#button {
+    background: white;
+    border-radius: 7px;
+    top: 10px;
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 10px;
+    position: absolute;
+    top: 180px;
+}
+
+#button a {
+    text-decoration: none;
+    color: black;
+    font-size: 30px;
+}

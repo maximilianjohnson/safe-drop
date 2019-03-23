@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>New Drop</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/active_drops.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <h1 class="title">SafeDrop</h1>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+    <div id="container">
+        <div id="container_dos">
+            <h1 id="post_title">{{i_name}}</h1>
+            <div id="img_container">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
+            </div>
+            <div id="details">
+                <div id="desc_info">
+                    <h2 id="desc_title">Description</h2>
+                    <pre id="desc">{{i_desc}}</pre>
+                </div>
+
+                <div id="non_desc">
+                    <h2 id="non_desc_title">Drop Details</h2>
+                    <p id="cost">${{i_cost}}</p>
+                    <p id="location">{{location}}</p>
+                    <p id="date">{{date_init}}</p>
+                </div>
+                <div id="button">
+                    <a href="#">Buy!</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
