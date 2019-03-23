@@ -50,6 +50,14 @@
     color: black;
 }
 
+.deletelink {
+    font-size: 20px;
+    position: absolute;
+    right: 0px;
+    margin: 15px 10px;
+    color: black;
+}
+
 .location {
     width: 70%;
     font-size: 20px;

@@ -24,7 +24,7 @@ from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
 from flask_socketio import SocketIO, join_room, leave_room, send
-from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent, search_allOrders
+from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent, search_allOrders, deleteOrder
 from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 
@@ -32,7 +32,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5433/SafeDrop_Logins'
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -40,7 +40,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -201,6 +201,18 @@ def active_drops():
         , b_date = b_date, a_price = a_price, a_location = a_location\
         , a_date = a_date, a_txids=a_txids, a_names=a_names)
 
+@app.route('/active_drops_<string:chat_id>_delete/')
+@login_required
+def deleteTX(chat_id):
+    deleteOrder(chat_id)
+    return redirect(url_for('active_drops'))
+
+
+@app.route('/active_drops_<string:chat_id>_decline/')
+@login_required
+def declineTX(chat_id):
+    repostOffer(chat_id)
+    return redirect(url_for('active_drops'))
 
 @app.route('/active_drops_<string:chat_id>_confirm/')
 @login_required
@@ -348,10 +360,11 @@ def buypage(txid):
         item_desc = search_OrderValue('description', txid = txid)
         item_cost = search_OrderValue('Cost', txid = txid)
         SellerName = search_OrderValue('S_username', txid=txid)
-        return render_template("buyPage.html", FirstName = FirstName, \
+        return render_template("buyPage(new).html", FirstName = FirstName, \
             LastName = LastName, i_name = item_name,\
             location = location, i_desc = item_desc, i_cost = item_cost,\
-            SellerName = SellerName)
+            SellerName = SellerName,currentuser = current_user.username,\
+            txid = txid)
 
 
 @app.route('/history/',  methods=['GET', 'POST'])
@@ -382,7 +395,7 @@ def history():
         h_location.append(item[8])
         h_date_open.append(item[6])
         h_date_close.append(str(item[12]))
-        h_status.append(item[9])
+        h_status.append(dropStatus(item[1], current_user.username, msg=True))
         h_url.append(item[10])
     currentuser = current_user.username
     return render_template('history.html', FirstName=FirstName, currentuser=currentuser, \
