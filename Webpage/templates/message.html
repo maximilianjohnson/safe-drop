@@ -125,6 +125,11 @@
 
       <div id="details">
 
+        {% if code_msg != "Request Box Access Code" %}
+        <a href="{{url_for('declineTX', chat_id=chatid)}}">Decline This Transaction</a>
+        <br></br>
+        {% endif %}
+
         <a href="{{request_code}}">{{code_msg}}</a>
 
         <h2>Cost: ${{item_cost}}</h3>

@@ -72,11 +72,6 @@
               s_user = s_name[i]
               b_user = b_name[i]
 
-              console.log(s_user)
-              console.log(b_user)
-              console.log("{{currentuser}}")
-              console.log((s_user === "{{currentuser}}"))
-              console.log((b_user === "{{currentuser}}"))
 
               if (s_user === "{{currentuser}}"){
                 s_user = '<b>' + s_user + '</b>'
@@ -85,9 +80,6 @@
               if (b_user === "{{currentuser}}"){
                 b_user = '<b>' + b_user + '</b>'
               }
-
-              console.log(s_user)
-              console.log(b_user)
 
               txid = h_txid[i]
               status = h_statuses[i]
@@ -98,7 +90,7 @@
               i = i+1
               data = ('<a class="posts"><h3 class="post_title">' + i_name +
                 '</h3><h3 class="cost">' + cost + '</h3><p>'+ b_user+' buying from ' +
-                s_user + '</p><h3 class="location">' + place +
+                s_user + ' <b>Status:</b> ' + status + '</p><h3 class="location">' + place +
                 '</h3><h3 class="date"> Open Date: ' + opendate + 'Close Date:'+ closedate +'</h3></a>');
               console.log(data)
               $("div#drop_history").append(data);

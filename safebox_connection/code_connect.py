@@ -23,7 +23,7 @@ from random import randint
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
 def connect_codelog():
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS codelog (id SERIAL, TXID TEXT, \
                  B_username TEXT, S_username TEXT, stage TEXT,\
@@ -40,7 +40,7 @@ def connect_codelog():
 #Function uses values to add new order to psycopg2 database
 def newBoxAssignment(txid, box_id):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     B_username = search_OrderValue('B_username', txid = txid)
     S_username = search_OrderValue('S_username', txid = txid)
@@ -57,7 +57,7 @@ def newBoxAssignment(txid, box_id):
 
 def codeGen(TXID):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     code = randint(100000, 999999)
     expiry = (datetime.datetime.now()) + datetime.timedelta(minutes = 1)
@@ -69,7 +69,7 @@ def codeGen(TXID):
 
 def search_ChatValue(column, txid):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     SQL = "SELECT " + column + " FROM codelog WHERE TXID=(%s)"
     data = (txid,)
@@ -80,7 +80,7 @@ def search_ChatValue(column, txid):
 
 def attemptCode(code, txid):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     date = datetime.datetime.now()
     cur.execute("UPDATE codelog SET attempt_time=%s, code_attempt=%s \
@@ -90,7 +90,7 @@ def attemptCode(code, txid):
 
 def writeToScaleDoor(txid, door_status = None, scale_status = None):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     if door_status != None:
         cur.execute("UPDATE codelog SET door_status=%s WHERE TXID=%s", (door_status, txid))
@@ -103,7 +103,7 @@ def writeToScaleDoor(txid, door_status = None, scale_status = None):
 #result = def boxResult()
 def accessSet(result, txid):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     stage = search_ChatValue('stage', txid)
     if stage == 'Seller Access':
@@ -141,7 +141,7 @@ def accessSet(result, txid):
 #can be adjusted to send unlock signal
 def codeResult(txid):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     time = datetime.datetime.now()
     expiry = search_ChatValue('expiry_time', txid)
@@ -163,7 +163,7 @@ def codeResult(txid):
 #return = webpage button
 def boxResult(txid, return_status = None):
     connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5433'")
+    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
     scale_reads = search_ChatValue('scale_status', txid)
     door_status = search_ChatValue('door_status', txid)
