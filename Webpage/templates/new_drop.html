@@ -135,7 +135,7 @@
                 place = document.getElementById("ilocation").value
                 console.log(image_list)
                 socket.emit( 'confirm_drop', {
-                  image_list: image_list[0],
+                  image_list: image_list,
                   I_name : I_name,
                   I_cost : I_cost,
                   I_desc : I_desc,
