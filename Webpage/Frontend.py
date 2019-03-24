@@ -337,7 +337,8 @@ def handle_confirm_drop(data, methods=['GET', 'POST']):
     B_name = 'None'
     txid = newOrder(S_name, B_name, I_name, I_desc, I_cost, location)
     url_id = search_OrderValue('img_url', txid=txid)
-    newImage(url_id, txid, user, url)
+    for item in url:
+        newImage(url_id, txid, user, item)
 
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
