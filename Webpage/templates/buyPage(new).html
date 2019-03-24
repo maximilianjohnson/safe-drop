@@ -63,17 +63,16 @@
                     <pre id="desc">{{i_desc}}</pre>
                 </div>
 
-                <div id="non_desc">
+                <div id="non_desc_container">
                     <h2 id="non_desc_title">Drop Details</h2>
-                    <p id="cost">${{i_cost}}</p>
-                    <p id="location">{{location}}</p>
-                    <p id="date">{{date_init}}</p>
+                    <p class="non_desc">${{i_cost}}</p>
+                    <p class="non_desc">{{location}}</p>
+                    <p class="non_desc">{{date_init}}</p>
                 </div>
                 <div id="button">
                   {% if currentuser != SellerName %}
                   <form action="" method="POST">
-                    <input type="text" class="message" placeholder="Send a message to the seller!"/>
-                    <button id="submit" type="submit" name="submit" value="submit">Buy</button>
+                    <button type="submit" name="submit" value="submit">Buy</button>
                   </form>
                   {% else %}
                   <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Posting</a>

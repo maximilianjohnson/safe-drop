@@ -371,11 +371,12 @@ def buypage(txid):
         item_desc = search_OrderValue('description', txid = txid)
         item_cost = search_OrderValue('Cost', txid = txid)
         SellerName = search_OrderValue('S_username', txid=txid)
+        date_init = search_OrderValue('date_initialized', txid = txid)
         return render_template("buyPage(new).html", FirstName = FirstName, \
             LastName = LastName, i_name = item_name,\
             location = location, i_desc = item_desc, i_cost = item_cost,\
-            SellerName = SellerName,currentuser = current_user.username,\
-            txid = txid)
+            SellerName = SellerName, date_init = date_init, \
+            currentuser = current_user.username, txid = txid)
 
 
 @app.route('/history/',  methods=['GET', 'POST'])
