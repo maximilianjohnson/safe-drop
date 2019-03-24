@@ -59,10 +59,9 @@
     white-space: pre-line;
 }
 
-#non_desc {
+#non_desc_container {
     background: white;
     border-radius: 7px;
-    font-size: 18px;
     display: inline-block;
     position: absolute;
     top: 0px;
@@ -70,7 +69,6 @@
     padding: 15px;
     width: 180px;
     line-height: 30px;
-    font-weight: 300;
 }
 
 #non_desc_title {
@@ -78,19 +76,31 @@
     margin-bottom: 10px;
 }
 
+#non_desc {
+  font-size: 17px;
+  font-weight: 300px;
+}
+
 #button {
     background: white;
     border-radius: 7px;
-    top: 10px;
     display: inline-block;
     padding: 5px 10px;
     margin: 10px;
     position: absolute;
-    top: 180px;
+    top: 210px;
 }
 
 #button a {
     text-decoration: none;
     color: black;
-    font-size: 30px;
+    font-size: 20px;
+}
+
+#button button {
+    border-radius: 7px;
+    font-size:20px;
+    color: black;
+    background-color: white;
+    border: none;
 }

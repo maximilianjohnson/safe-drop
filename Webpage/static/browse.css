@@ -110,7 +110,7 @@
 }
 
 #search {
-    width: 400px;
+    width: 40vw;
     border: 1px solid #cfcfcf;
     background-color: white;
     border-radius: 6px;
@@ -156,7 +156,7 @@
 
 @media only screen and (max-width: 550px) {
     #post_title {
-        left: 0px;
+        left: 2px;
         width: calc(100% - 120px);
     }
 

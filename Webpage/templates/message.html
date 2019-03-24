@@ -13,9 +13,7 @@
   <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <div class="nav">
-
-    <p class="menu_title">{{currentuser}}</p>
-
+    <h1 class="title">SafeDrop</h1>
     <label class="toggle" for="toggle">&#9776;</label>
     <input type="checkbox" id="toggle"/>
     <div class="user">
@@ -48,15 +46,19 @@
     </div>
   </div>
 
+
+
   <div class="container">
 
-    <div class="messages_sec">
+    <div class="messages_container">
       <h2 id="connected_to">
-        You have connected to Admin! Say something bitch
+        You have connected to mr.admin!
       </h2>
 
-
-      <div class = "old_messages"></div>
+      <div id="message_sent_container">
+        <div class = "old_messages"></div>
+        <div class="message_holder"></div>
+      </div>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script type="text/javascript">
@@ -69,8 +71,6 @@
       }
       </script>
 
-
-      <div class="message_holder"></div>
 
       <form action="" method="POST">
         <input type="text" class="message" placeholder="Messages"/>
@@ -115,26 +115,28 @@
       })
     </script>
 
-    <label class="toggle2" for="toggle2">&#9432;</label>
+    <label class="toggle2" for="toggle2">Transaction Confirmation</label>
     <input type="checkbox" id="toggle2"/>
-    <div class="drop_info">
+    <div class="toggle_target">
+      <div class="drop_info">
 
-      <h2 id="title">{{item_name}}</h2>
+        <h2 id="title">{{item_name}}</h2>
 
-      <pre id="description">{{item_desc}}</pre>
+        <pre id="description">{{item_desc}}</pre>
 
-      <div id="details">
+        <div id="details">
+          <h2>Cost: ${{item_cost}}</h2>
+          <h2>Location: {{location}}</h2>
+          <h2>Date Posted: {{date_init}}</h2>
+        </div>
+      </div>
 
-        {% if code_msg != "Request Box Access Code" %}
-        <a href="{{url_for('declineTX', chat_id=chatid)}}">Decline This Transaction</a>
-        <br></br>
-        {% endif %}
+      <div id="buyORdecline">
 
-        <a href="{{request_code}}">{{code_msg}}</a>
+        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
 
-        <h2>Cost: ${{item_cost}}</h3>
-        <h2>Location: {{location}}</h3>
-        <h2>Date Posted: {{date_init}}</h3>
+
+        <a id="confirm" href="{{request_code}}">Confirm Drop</a>
       </div>
     </div>
   </div>
