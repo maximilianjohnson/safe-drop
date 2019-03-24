@@ -25,7 +25,7 @@ def connect_OrderInfo_db():
     cur.execute("CREATE TABLE IF NOT EXISTS orderInfo (id SERIAL, TXID TEXT, \
                  B_username TEXT, S_username TEXT, I_name TEXT, description\
                  TEXT, date_initialized TEXT, Cost REAL, Location TEXT,\
-                 status TEXT, img_url TEXT, data_modified TEXT, date_resolved TEXT)")
+                 status TEXT, img_url SERIAL, data_modified TEXT, date_resolved TEXT)")
     conn.commit()
     conn.close()
 
@@ -33,7 +33,7 @@ def connect_OrderInfo_db():
 #connect_OrderInfo_db()
 
 #Function uses values to add new order to psycopg2 database
-def newOrder (S_username, B_username, I_name, desc, Cost, Location, img_url=None):
+def newOrder (S_username, B_username, I_name, desc, Cost, Location):
     connect_OrderInfo_db()
     conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5432'")
     cur=conn.cursor()
@@ -42,14 +42,14 @@ def newOrder (S_username, B_username, I_name, desc, Cost, Location, img_url=None
     date_resolved = 'None'
     date_modified = str(datetime.now())
     status = 'None'
-    url = img_url
     #while check_dup_id(ID) == 1: #commented out due to redundancy
     #    ID = uuid.uuid4()
     cur.execute("INSERT INTO orderInfo VALUES(default, %s, %s, %s, %s, %s, %s, %s, \
-                %s, %s, %s, %s, %s)", (TXID, B_username, S_username, I_name, desc, \
-                date_init, Cost, Location, status, url, date_modified, date_resolved))
+                %s, %s, default, %s, %s)", (TXID, B_username, S_username, I_name, desc, \
+                date_init, Cost, Location, status, date_modified, date_resolved))
     conn.commit()
     conn.close()
+    return TXID
 
 #view Function
 def view():

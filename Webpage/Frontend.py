@@ -15,6 +15,7 @@ all uses postgresql, sqlalchemy, flask and flask_login
 import sys
 sys.path.append('../')
 
+import json
 from flask import Flask, render_template, redirect, url_for, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required,\
 logout_user, current_user
@@ -27,6 +28,7 @@ from flask_socketio import SocketIO, join_room, leave_room, send
 from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuyer, statusUpdate, repostOffer, browseRecent, search_allOrders, deleteOrder
 from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
+from images.order_images import newImage, search_allImages
 
 app = Flask(__name__)
 
@@ -73,7 +75,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-        return render_template("index.html")
+        return redirect(url_for('login'))
 
 
 @app.route('/signup/', methods=['GET', 'POST'])
@@ -103,7 +105,7 @@ def signup():
 def login():
     message= None
     if current_user.is_authenticated:
-        return redirect(url_for('profile'))
+        return redirect(url_for('browse', page_id = 1))
     if request.method == 'POST':
         userentry = request.form['username']
         passentry = request.form['password']
@@ -113,7 +115,7 @@ def login():
             return render_template("login.html", error = message)
         else:
             login_user(user)
-            return redirect(url_for('profile'))
+            return redirect(url_for('browse', page_id = 1))
     return render_template("login.html", error = message)
 
 @app.route('/profile/')
@@ -322,23 +324,31 @@ def boxUse(chat_id):
         confirm_msg = confirm_msg)
 
 
+@socketio.on('confirm_drop')
+def handle_confirm_drop(data, methods=['GET', 'POST']):
+    print('got the sauce: ' + str(data))
+    url = data['image_list']
+    user = current_user.username
+    I_name = data["I_name"]
+    I_cost = data["I_cost"]
+    I_desc = data["I_desc"]
+    location = data["place"]
+    S_name = current_user.username
+    B_name = 'None'
+    txid = newOrder(S_name, B_name, I_name, I_desc, I_cost, location)
+    url_id = search_OrderValue('img_url', txid=txid)
+    newImage(url_id, txid, user, url)
+
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
 @login_required
 def new_drop():
     FirstName = str(search_value('first_name', str(current_user.username)))
     LastName = str(search_value('last_name', current_user.username))
-
     if request.method=='POST':
-        I_name = request.form["Item_name"]
-        I_cost = request.form["Item_cost"]
-        I_desc = request.form["Item_desc"]
-        Location = request.form["Location"]
-        S_name = current_user.username
-        B_name = 'None'
-        newOrder(S_name, B_name, I_name, I_desc, I_cost, Location)
+        return redirect(url_for('active_drops'))
     return render_template("new_drop.html", FirstName = FirstName,\
-        LastName = LastName)
+    LastName = LastName)
 
 @app.route('/buy_<string:txid>', methods=['GET', 'POST'])
 @login_required
@@ -422,6 +432,7 @@ def browse(page_id):
     load_txids = browseRecent()
 
     load_pages = load_txids[load_start:(load_start+10)]
+
     for item in load_pages:
         if item[3] != None:
             SellerName.append(item[3])
@@ -434,10 +445,10 @@ def browse(page_id):
 
         else:
             pass
-        return render_template("browse.html", FirstName = FirstName, \
-        LastName = LastName, SellerName=SellerName, \
-        ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
-        Location=Location, date_post=date_post, txid=txid)
+    return render_template("browse.html", FirstName = FirstName, \
+    LastName = LastName, SellerName=SellerName, \
+    ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
+    Location=Location, date_post=date_post, txid=txid)
 
 
 if __name__ == '__main__':
