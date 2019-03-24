@@ -132,11 +132,11 @@
       </div>
 
       <div id="buyORdecline">
-
+        {% if code_msg != "Request Box Access Code" %}
         <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        {% endif %}
 
-
-        <a id="confirm" href="{{request_code}}">Confirm Drop</a>
+        <a id"confirm" href="{{request_code}}">{{code_msg}}</a>
       </div>
     </div>
   </div>
