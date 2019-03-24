@@ -29,6 +29,7 @@ from Order_Info.OrderInfo_Backend import search_OrderValue, newOrder, confirmBuy
 from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 from images.order_images import newImage, search_allImages
+from safebucks.currency import searchBucks, add100Bucks, addUserBucks
 
 app = Flask(__name__)
 
@@ -129,9 +130,10 @@ def profile():
     Address = str(search_value('address', current_user.username))
     user_rating = str(search_value('user_rating', current_user.username))
     status = search_value('status', current_user.username)
+    bucks = searchBucks(current_user.username)
     return render_template("profile.html", FirstName=FirstName, \
         LastName=LastName, Age=Age, Email=Email, date_joined=date_joined, \
-        Address=Address, user_rating=user_rating, status=status)
+        Address=Address, user_rating=user_rating, status=status, bucks=bucks)
 
 @app.route('/logout/')
 @login_required
@@ -350,6 +352,16 @@ def new_drop():
         return redirect(url_for('active_drops'))
     return render_template("new_drop.html", FirstName = FirstName,\
     LastName = LastName)
+
+@app.route('/safebucks_add_100/')
+@login_required
+def add100():
+    user = current_user.username
+    if searchBucks(user) == None:
+        addUserBucks(user)
+    else:
+        add100Bucks(user)
+    return redirect(url_for('profile'))
 
 @app.route('/buy_<string:txid>', methods=['GET', 'POST'])
 @login_required
