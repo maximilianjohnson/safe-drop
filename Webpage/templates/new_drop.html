@@ -57,7 +57,7 @@
             <p>Title: </p>
           </td>
           <td>
-            <input type="text" name="Item_name" placeholder="Enter a title for your item..." required>
+            <input type="text" id="iname" name="Item_name" placeholder="Enter a title for your item..." required>
           </td>
         </tr>
 
@@ -67,7 +67,7 @@
             <p>Description: </p>
           </td>
           <td>
-            <textarea name="Item_desc" placeholder="Enter a description for your item..."></textarea>
+            <textarea name="Item_desc" id = "idescription" placeholder="Enter a description for your item..."></textarea>
           </td>
         </tr>
 
@@ -77,7 +77,7 @@
            <p>Location: </p>
           </td>
           <td>
-            <input type="text" name="Location" placeholder="Enter a title for your item..." required>
+            <input type="text" id='ilocation' name="location" placeholder="Enter a location for your item..." required>
           </td>
         </tr>
 
@@ -87,60 +87,66 @@
             <p>Cost: $</p>
           </td>
           <td>
-            <input type="number" id="cost" name="Item_cost">
+            <input type="number" id="icost" name="Item_cost">
           </td>
         </tr>
       </table>
+      <div class="button">
 
+          <button class="post_button" id="post_button" type="submit" name='post' onclick="confirm()">Post!</button>
 
+      </div>
 
+      </form>
     </div>
 
     <div class="drop_images">
       <h2 class="newdrop_header">Drop Images</h2>
+        <button id="upload_widget" class="cloudinary-button">Upload files</button>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 
-      <div class="gallery">
-      </div>
-
-      <input id="file_explore" type="file" multiple id="gallery-photo-add" />
-
-    </div>
-
-    <div class="button">
-      <button class="post_button" type="submit" name="post">Post!</button>
-    </div>
-
-  </form>
-
-
-
-
-  <script type="text/javascript">
-    $(function() {
-      // Multiple images preview in browser
-      var imagesPreview = function(input, placeToInsertImagePreview) {
-
-        if (input.files) {
-          var filesAmount = input.files.length;
-
-          for (i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-
-            reader.onload = function(event) {
-              $($.parseHTML('<img>')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
+        <script type="text/javascript">
+        var image_list = []
+        var myWidget = cloudinary.createUploadWidget({
+          cloudName: 'dwbhfproj',
+          uploadPreset: 'ywss4lg4'}, (error, result) => {
+            if (!error && result && result.event === "success") {
+              console.log('Done! Here is the image info: ', result.info);
+              image_list.push(result.info.url)
             }
-
-            reader.readAsDataURL(input.files[i]);
           }
-        }
+        )
 
-      };
+        document.getElementById("upload_widget").addEventListener("click", function(){
+                  myWidget.open();
+        }, false);
 
-      $('#gallery-photo-add').on('change', function() {
-        imagesPreview(this, 'div.gallery');
-      });
-    });
-  </script>
-</body>
+        </script>
+    </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+        <script type="text/javascript">
+            var socket = io.connect();
+
+            var confirm = function() {
+                I_name = document.getElementById("iname").value
+                I_cost = document.getElementById("icost").value
+                I_desc = document.getElementById("idescription").value
+                place = document.getElementById("ilocation").value
+                console.log(image_list)
+                socket.emit( 'confirm_drop', {
+                  image_list: image_list[0],
+                  I_name : I_name,
+                  I_cost : I_cost,
+                  I_desc : I_desc,
+                  place : place
+                    } )
+              };
+
+
+
+        </script>
+      </body>
+
 
 </html>
