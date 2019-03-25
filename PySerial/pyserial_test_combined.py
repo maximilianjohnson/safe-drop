@@ -19,7 +19,10 @@ time.sleep(2) #Adds 5 second delay before Python starts searching for a signal f
 writeToScaleDoor('example', scale_status ='0')
 writeToScaleDoor('example', door_status ='0')
 buyOrSell = '0'
+codeStr = ''
 cond = True
+codeGen("example") #Generate a new door code
+
 
 while cond == True:
     print('here')
@@ -31,10 +34,23 @@ while cond == True:
     #doorStatus = search_ChatValue("door_status","example")
     buyWeight = search_ChatValue("scale_status","example") #string
     stage = search_ChatValue("stage", "example")
-    txStage = txnStage(stage, buyOrSell) #0/1 string'
+    txStage = txnStage(stage, buyOrSell) #0/1 string
     print(txStage)
     if txStage == '0':
-        if ser.inWaiting() != 0:
+        genCode = search_ChatValue("access_code","example") #Find the value in the database table
+        if (ser.inWaiting() != 0):
+            for i in len(6):
+                codeDigit = ser.readline()
+                codeDigit = var.decode("utf-8")
+                fullCode[i] = codeDigit
+            codeStr = ''.join(fullCode)
+            print(codeStr)
+        attemptCode(codeStr, "example") #check the entered code against the database code
+        doorVer = codeResult("example") #Check if the code was correct
+        if (doorVer == "Success! You may now access your SafeDrop."):
+            lockVer = 1
+            ser.write(lockVer)
+        '''if (ser.inWaiting() != 0 and lock = 1): # 1 = open for lock
             time.sleep(.5)
             len = ser.readline()[0:1]
             len = len.decode("utf-8")
@@ -48,7 +64,6 @@ while cond == True:
             writeToScaleDoor('example', scale_status = sellWeight)
         else:
             time.sleep(.5)
-            print("No data is currently being sent.")
 
     else:
         time.sleep(60)
@@ -70,4 +85,4 @@ while cond == True:
                 print("You have attempted to steal from SafeDrop. ")
                 print("Your life is now forfeit.")
         else:
-            print("No data is currently being sent.")
+            print("No data is currently being sent.")'''
