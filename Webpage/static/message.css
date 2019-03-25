@@ -90,6 +90,7 @@
     border: none;
     margin: 0px 0px 0px 15px;
     box-shadow: 0px 0px 20px #b9b9b9;
+    cursor: pointer;
 }
 
 .toggle2 {
