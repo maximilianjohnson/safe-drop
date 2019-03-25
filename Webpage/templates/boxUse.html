@@ -51,7 +51,9 @@
     <h2 id="confirmation">Sale confirmed with Admin</h2>
 
     <h3 id="code">Box Code: {{code}}</h3>
+    {% if code != "Request Box Access Code" %}
     <p id="info">&#9432; This code will expire in <span id="time"></span> seconds</p>
+    {% endif %}
 
     <form action="" method="POST">
       <button id="request" type="submit" name="submit" value="submit">Request Code</button>
