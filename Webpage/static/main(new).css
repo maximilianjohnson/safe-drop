@@ -41,6 +41,15 @@ h2 {
 
 }
 
+#title_image{
+  Position: absolute;
+  Top: 2px;
+  Left:190px;
+  width: 70px;
+  height: 70px;
+
+}
+
 p {
     font-size: 18px;
 }

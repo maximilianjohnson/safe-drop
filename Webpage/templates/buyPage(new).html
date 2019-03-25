@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>New Drop</title>
+  <title>Buy Page</title>
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
   <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -13,6 +13,7 @@
   <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <div class="nav">
+    <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
     <h1 class="title">SafeDrop</h1>
     <label class="toggle" for="toggle">&#9776;</label>
     <input type="checkbox" id="toggle"/>
@@ -50,13 +51,21 @@
         <div id="container_dos">
             <h1 id="post_title">{{i_name}}</h1>
             <div id="img_container">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
-                <img src="https://i.redd.it/0abold5vg1k21.jpg" alt="peepohappy">
             </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script type="text/javascript">
+            var i = 0;
+            var urls = ({{url|tojson}})
+
+                  {% for item in url %}
+                  item = urls[i]
+                  i = i+1
+                  data = ('<img src="'+ item +'" alt="item_img">');
+                  console.log(data)
+                  $("div#img_container").append(data);
+                  {% endfor %}
+
+            </script>
             <div id="details">
                 <div id="desc_info">
                     <h2 id="desc_title">Description</h2>
