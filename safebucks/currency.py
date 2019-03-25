@@ -20,7 +20,7 @@ import psycopg2
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
 def connect_safebucks():
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS safebucks (username TEXT, \
                  bucks REAL)")
@@ -33,7 +33,7 @@ def connect_safebucks():
 #Function uses values to add new order to psycopg2 database
 def addUserBucks(user):
     connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     bucks = 100.00
     cur.execute("INSERT INTO safebucks VALUES(%s, %s)", (user, bucks))
@@ -42,7 +42,7 @@ def addUserBucks(user):
 
 def searchBucks(user):
     connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     cur.execute("SELECT bucks FROM safebucks WHERE username=%s", (user,))
     value = cur.fetchall()
@@ -51,7 +51,7 @@ def searchBucks(user):
 
 def updateBucks(user, bucks):
     connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     cur.execute("UPDATE safebucks SET bucks=%s WHERE username=%s", (bucks, user))
     conn.commit()
@@ -59,7 +59,7 @@ def updateBucks(user, bucks):
 
 def add100Bucks(user):
     connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5432'")
+    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
     bucks_i = float(searchBucks(user))
     bucks = bucks_i + 100
