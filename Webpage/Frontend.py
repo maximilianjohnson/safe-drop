@@ -16,6 +16,7 @@ import sys
 sys.path.append('../')
 
 import json
+from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required,\
 logout_user, current_user
@@ -35,7 +36,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5433/SafeDrop_Logins'
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -43,7 +44,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -68,6 +69,20 @@ class UserLogins(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 db.create_all()
+
+#changes displayed initialized date based on how long ago they were posted
+def date_time (date):
+    date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    date_now = datetime.now()
+    delta = date_now - date
+    if delta.days > 0:
+        display = date.strftime("%B %d, %Y")
+    elif delta.days == 0 and delta.seconds >= 3600:
+        display = (str(date_now.hour - date.hour) + " hours ago")
+    else:
+        display = (str(date_now.minute - date.minute) + " minutes ago")
+    return display
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -126,7 +141,8 @@ def profile():
     LastName = str(search_value('last_name', current_user.username))
     Age = str(search_value('age', current_user.username))
     Email = str(search_value('email', current_user.username))
-    date_joined = str(search_value('date_joined', current_user.username))
+    date_joined_ugly = datetime.strptime(search_value('date_joined', current_user.username), '%Y-%m-%d')
+    date_joined = date_joined_ugly.strftime("%B %d, %Y")
     Address = str(search_value('address', current_user.username))
     user_rating = str(search_value('user_rating', current_user.username))
     status = search_value('status', current_user.username)
@@ -170,7 +186,7 @@ def active_drops():
             s_other_user.append(search_OrderValue('B_username', txid=txid))
             s_price.append(search_OrderValue('Cost', txid=txid))
             s_location.append(search_OrderValue('Location', txid=txid))
-            s_date.append(search_OrderValue('date_initialized', txid=txid))
+            s_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
         else:
             txid = str(item)
             txid = txid[2:-3]
@@ -178,7 +194,7 @@ def active_drops():
             a_names.append(search_OrderValue('I_name', txid=txid))
             a_price.append(search_OrderValue('Cost', txid=txid))
             a_location.append(search_OrderValue('Location', txid=txid))
-            a_date.append(search_OrderValue('date_initialized', txid=txid))
+            a_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
 
     b_txid = search_OrderValue('TXID', B_username = current_user.username)
     b_txids = []
@@ -195,7 +211,7 @@ def active_drops():
         b_other_user.append(search_OrderValue('S_username', txid=txid))
         b_price.append(search_OrderValue('Cost', txid=txid))
         b_location.append(search_OrderValue('Location', txid=txid))
-        b_date.append(search_OrderValue('date_initialized', txid=txid))
+        b_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
     currentuser = current_user.username
     return render_template('active_drops.html', FirstName=FirstName, \
         LastName = LastName, s_txids=s_txids, b_txids = b_txids,\
@@ -235,6 +251,7 @@ def confirmTX(chat_id):
 
 
 
+
 @app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
@@ -249,7 +266,7 @@ def transactionpage(chat_id):
     item_cost = search_OrderValue('Cost', txid = chat_id)
     buy_user = search_OrderValue('B_username', txid = chat_id)
     sell_user = search_OrderValue('S_username', txid = chat_id)
-    date_init = search_OrderValue('date_initialized', txid = chat_id)
+    date_init = date_time(search_OrderValue('date_initialized', txid = chat_id))
     oldMsg = searchMsg(chat_id)
     return render_template('message.html', currentuser = \
     str(current_user.username), chatid = chat_id, item_name=item_name,\
@@ -393,14 +410,14 @@ def buypage(txid):
         item_desc = search_OrderValue('description', txid = txid)
         item_cost = search_OrderValue('Cost', txid = txid)
         SellerName = search_OrderValue('S_username', txid=txid)
-        date_init = search_OrderValue('date_initialized', txid = txid)
+        date_init = date_time(search_OrderValue('date_initialized', txid = txid))
         return render_template("buyPage(new).html", FirstName = FirstName, \
             LastName = LastName, i_name = item_name,\
             location = location, i_desc = item_desc, i_cost = item_cost,\
             SellerName = SellerName, date_init = date_init, \
             currentuser = current_user.username, txid = txid, url=url)
 
-
+#not connected to date_time function
 @app.route('/history/',  methods=['GET', 'POST'])
 @login_required
 def history():
@@ -465,7 +482,7 @@ def browse(page_id):
             ItemDesc.append(item[5])
             ItemCost.append(item[7])
             Location.append(item[8])
-            date_post.append(item[6])
+            date_post.append(date_time(item[6]))
             txid.append(item[1])
             img = search_allImages(TXID=item[1])
             try:
