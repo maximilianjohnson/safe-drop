@@ -158,10 +158,19 @@
     #post_title {
         left: 2px;
         width: calc(100% - 120px);
+        font-size: 22px;
     }
 
     #desc {
         display: none;
+    }
+
+    #location {
+      font-size: 17px;
+    }
+
+    #date {
+      font-size: 17px;
     }
 
     #img_container {

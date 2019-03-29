@@ -78,9 +78,9 @@ def date_time (date):
     if delta.days > 0:
         display = date.strftime("%B %d, %Y")
     elif delta.days == 0 and delta.seconds >= 3600:
-        display = (str(date_now.hour - date.hour) + " hours ago")
+        display = (str(int(delta.seconds / 3600)) + " hours ago")
     else:
-        display = (str(date_now.minute - date.minute) + " minutes ago")
+        display = (str(int(delta.seconds / 60)) + " minutes ago")
     return display
 
 
@@ -255,6 +255,8 @@ def confirmTX(chat_id):
 @app.route('/active_drops_<string:chat_id>/', methods=['GET', 'POST'])
 @login_required
 def transactionpage(chat_id):
+    FirstName = str(search_value('first_name', str(current_user.username)))
+    LastName = str(search_value('last_name', current_user.username))
 
     request_code = url_for('confirmTX', chat_id = chat_id)
     code_msg = dropStatus(chat_id, current_user.username, msg = True)
@@ -269,9 +271,10 @@ def transactionpage(chat_id):
     date_init = date_time(search_OrderValue('date_initialized', txid = chat_id))
     oldMsg = searchMsg(chat_id)
     return render_template('message.html', currentuser = \
-    str(current_user.username), chatid = chat_id, item_name=item_name,\
-    location = location, item_desc=item_desc, item_cost=item_cost,\
-    buy_user=buy_user, sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
+    str(current_user.username), FirstName=FirstName, LastName=LastName, \
+    chatid = chat_id, item_name=item_name, location = location, \
+    item_desc=item_desc, item_cost=item_cost, buy_user=buy_user, \
+    sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
     request_code = request_code, code_msg = code_msg)
 
 def messageReceived(methods=['GET', 'POST']):

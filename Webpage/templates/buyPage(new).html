@@ -2,9 +2,9 @@
 <html>
 
 <head>
-  <title>Buy Page</title>
+  <title>New Drop</title>
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
-  <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
+  <link rel="stylesheet" type="text/css" href="../static/buyPage2.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -13,7 +13,6 @@
   <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <div class="nav">
-    <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
     <h1 class="title">SafeDrop</h1>
     <label class="toggle" for="toggle">&#9776;</label>
     <input type="checkbox" id="toggle"/>
@@ -48,10 +47,23 @@
   </div>
 
     <div id="container">
-        <div id="container_dos">
-            <h1 id="post_title">{{i_name}}</h1>
-            <div id="img_container">
+        <div id="img_container">
+            <div id="big_img">
+              <img src="https://rocket-league.com/content/media/users/avatar/256px/f120263a711533640100.png" id="expandedImg">
+
             </div>
+            <div class="left">
+                  <button id="left-button">
+                    &larr;
+                  </button>
+                </div>
+            <div class="right">
+                <button id="right-button">
+                    &rarr;
+                  </button>
+
+                </div>
+            <div id="small_img"></div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
             <script type="text/javascript">
             var i = 0;
@@ -60,12 +72,16 @@
                   {% for item in url %}
                   item = urls[i]
                   i = i+1
-                  data = ('<img src="'+ item +'" alt="item_img">');
+                  data = ('<img src="'+ item +'" alt="item_img" onclick="myFunction(this)">');
                   console.log(data)
-                  $("div#img_container").append(data);
+                  $("div#small_img").append(data);
                   {% endfor %}
 
             </script>
+        </div>
+
+        <div id="drop_info">
+            <h1 id="post_title">{{i_name}}</h1>
             <div id="details">
                 <div id="desc_info">
                     <h2 id="desc_title">Description</h2>
@@ -87,7 +103,36 @@
                   <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Posting</a>
                   {% endif %}
                 </div>
-
-            </div>
         </div>
     </div>
+    </div>
+
+    <script  src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function myFunction(imgs) {
+          var expandImg = document.getElementById("expandedImg");
+          var imgText = document.getElementById("imgtext");
+          expandImg.src = imgs.src;
+          imgText.innerHTML = imgs.alt;
+          expandImg.parentElement.style.display = "block";
+        }
+    </script>
+
+
+    <script type="text/javascript">
+       $('#right-button').click(function() {
+          event.preventDefault();
+          $('#small_img').animate({
+            scrollLeft: "+=200px"
+          }, "slow");
+       });
+
+         $('#left-button').click(function() {
+          event.preventDefault();
+          $('#small_img').animate({
+            scrollLeft: "-=200px"
+          }, "slow");
+       });
+    </script>
+</body>
+</html>

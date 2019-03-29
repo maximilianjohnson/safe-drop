@@ -8,7 +8,7 @@
 
 .drop_info {
     background: white;
-    width: 25%;
+    width: 425px;
     height: calc(100% - 136px);
     border-radius: 7px;
     padding: 15px;
@@ -41,8 +41,8 @@
 }
 
 .messages_container {
-    width: calc(75% - 75px);
-    height: calc(100% - 30px);
+    width: calc(100% - 500px);
+    height: calc(100% - 26px);
     margin: 15px;
     position: absolute;
     bottom: 0px;
@@ -110,30 +110,40 @@
     bottom: 0px;
     left: 0px;
     margin: 15px;
-    width: 27.15%;
+    width: 455px;
 }
 
 #buyORdecline a {
     text-decoration: none;
     color: black;
     display: inline-block;
-    width: 200px;
+    width: 220px;
     background: white;
-    width: 40%;
-    height: 33.5px;
+    height: 62px;
     border-radius: 7px;
-    padding: 10px ;
-    padding-top: 19px;
     text-align: center;
     color: black;
     font-size: 20px;
     box-shadow: 0px 0px 20px #b9b9b9;
+    vertical-align: middle;
 }
 
 #decline {
     position: absolute;
     right: 0px;
+    line-height: 61px;
 }
+
+.exit {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    display: none;
+}
+
+
 
 @media only screen and (max-width: 1200px) {
     .drop_info {
@@ -146,6 +156,10 @@
 
     #buyORdecline {
         width: 310px;
+    }
+
+    #buyORdecline a {
+        width: 147px;
     }
 }
 
@@ -166,6 +180,10 @@
         background: #e1e1e1;
     }
 
+    #buyORdecline a {
+        width: 48%;
+    }
+
     .toggle_target {
         display: none;
     }
@@ -173,23 +191,25 @@
     .toggle2 {
         background: white;
         display: block;
-        font-size: 20px;
+        font-size: 14px;
         cursor: pointer;
         position: absolute;
-        top: 8px;
-        right: 0px;
-        margin: 5px;
-        z-index: 1;
-        width: 130px;
+        top: 0px;
+        left: 0px;
+        margin: 15px;
+        width: 85px;
         text-align: center;
-        border-radius: 7px;
+        border-radius: 5px;
+        padding: 3px 0px;
     }
 
     #toggle2:checked + .toggle_target {
         display: inline-block;
     }
 
-
-
+    .exit {
+        display: block;
+        cursor: pointer;
+    }
 
 }
