@@ -2,9 +2,9 @@
 <html>
 
 <head>
-  <title>SafeDrop Profile</title>
+  <title>Buy Page</title>
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
-  <link rel="stylesheet" type="text/css" href="../static/profile.css">
+  <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -13,9 +13,9 @@
   <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <div class="nav">
-    <label class="toggle" for="toggle">&#9776;</label>
     <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
     <h1 class="title">SafeDrop</h1>
+    <label class="toggle" for="toggle">&#9776;</label>
     <input type="checkbox" id="toggle"/>
     <div class="user">
       <ul>
@@ -47,19 +47,47 @@
     </div>
   </div>
 
+    <div id="container">
+        <div id="container_dos">
+            <h1 id="post_title">{{i_name}}</h1>
+            <div id="img_container">
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script type="text/javascript">
+            var i = 0;
+            var urls = ({{url|tojson}})
 
-<!-- This is the body of the webpage-->
-<div class="box">
+                  {% for item in url %}
+                  item = urls[i]
+                  i = i+1
+                  data = ('<img src="'+ item +'" alt="item_img">');
+                  console.log(data)
+                  $("div#img_container").append(data);
+                  {% endfor %}
 
-    <h2 class="profile_header">{{FirstName}} {{LastName}}</h2>
+            </script>
+            <div id="details">
+                <div id="desc_info">
+                    <h2 id="desc_title">Description</h2>
+                    <pre id="desc">{{i_desc}}</pre>
+                </div>
 
-    <div class="inside_box">
-        <h3 class="profile_text">Welcome, {{current_user.username}}</h3>
-        <p class="profile_text">User rating: {{ user_rating }} Status: {{ status }}</p>
-        <h3 class="profile_text">Email: {{Email}}</h3>
-        <h3 class="profile_text">Age: {{Age}}</h3>
-        <h3 class="profile_text">Date joined: {{date_joined}}</h3>
-        <h3 class="profile_text">Address: {{Address}}</h3>
+                <div id="non_desc_container">
+                    <h2 id="non_desc_title">Drop Details</h2>
+                    <p class="non_desc">${{i_cost}}</p>
+                    <p class="non_desc">{{location}}</p>
+                    <p class="non_desc">{{date_init}}</p>
+                </div>
+                <div id="button">
+                  {% if currentuser != SellerName %}
+                  <form action="" method="POST">
+                    <button type="submit" name="submit" value="submit">Buy</button>
+                  </form>
+                  {% else %}
+                  <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Posting</a>
+                  {% endif %}
+                </div>
+
+            </div>
+        </div>
     </div>
-
-</div>
