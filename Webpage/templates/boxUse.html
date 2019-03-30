@@ -48,19 +48,55 @@
 
 
   <div id="container">
-    <h2 id="confirmation">Sale confirmed with Admin</h2>
+    <h2 id="confirmation">SafeDrop Location Interaction Page</h2>
 
+    {% if code != "Awaiting seller drop..."%}
     <h3 id="code">Box Code: {{code}}</h3>
-    {% if code != "Request Box Access Code" %}
-    <p id="info">&#9432; This code will expire in <span id="time"></span> seconds</p>
+    {% else %}
+    <h3 id="code">{{code}}</h3>
     {% endif %}
 
+    {% if code != "Request Box Access Code"%}
+    {% if stage == "Buyer Access"%}
+    <p id="info">&#9432; This code will expire in <span id="time"></span>
+    seconds.<br><br>By closing the box without returning the item,<br>
+    the sale will be automatically confirmed.<br>Thank you for using SafeDrop.</p>
+    {% elif code != "Awaiting seller drop..." %}
+    <p id="info">&#9432; This code will expire in <span id="time"></span>
+    seconds.<br><br>By closing the box with your item in place,<br>
+    the sale will be automatically confirmed.<br>Thank you for using SafeDrop.</p>
+    {% endif %}
+    {% endif %}
+
+    {% if code != "Request Box Access Code"%}
+    {% if code != "Awaiting seller drop..."%}
+    {% if stage == "Buyer Access" %}
+    <p id="return_disclaimer">By selecting this option, you are confirming
+    that the item you attempted to purchase<br> has been damaged, altered or is
+    somehow different from the item you agreed upon purchasing.<br>Please make
+    sure <b>ALL ITEMS</b> have been returned to the box in order to make a successful
+    return.</p>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    {% if code != "Awaiting seller drop..."%}
+    {% if code == "Request Box Access Code"%}
     <form action="" method="POST">
       <button id="request" type="submit" name="submit" value="submit">Request Code</button>
     </form>
+    {% endif %}
+    {% endif %}
 
-
-
+    {% if code != "Request Box Access Code"%}
+    {% if code != "Awaiting seller drop..."%}
+    {% if stage == "Buyer Access" %}
+    <form action="" method="POST">
+      <button id="return_button" type="submit" name="submit" value="submit">Return Item</button>
+    </form>
+    {% endif %}
+    {% endif %}
+    {% endif %}
 
   </div>
 

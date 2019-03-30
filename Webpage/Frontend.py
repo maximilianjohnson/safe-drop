@@ -312,19 +312,6 @@ def boxUse(chat_id):
             return render_template("boxUse.html", code = codeView, item = item,\
             confirm_msg = confirm_msg)
 
-        #to simulate access code
-        sub2 = request.form.get("submit2")
-        if sub2 == 'submit2':
-            confirm_msg = dropStatus(chat_id, current_user.username, msg = True)
-            code = request.form.get("message")
-            attemptCode(code, chat_id)
-            print(codeResult(chat_id))
-            result = codeResult(chat_id)
-            print(result)
-
-            return render_template("boxUse.html", code = 'Code Attemped.', item = item,\
-            confirm_msg = confirm_msg, result=result)
-
 
     else:
         b_user = search_OrderValue('B_username', txid = chat_id)
@@ -343,7 +330,7 @@ def boxUse(chat_id):
             code_msg = 'Confirm transaction before requesting an access code.'
         item = search_OrderValue('I_name', txid = chat_id)
         return render_template("boxUse.html",code = code_msg, item = item,\
-        confirm_msg = confirm_msg)
+        confirm_msg = confirm_msg, stage=stage)
 
 
 @socketio.on('confirm_drop')
