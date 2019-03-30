@@ -175,6 +175,11 @@
         width: calc(100% - 30px);
     }
 
+    .message {
+        width: calc(100% - 205px);
+        right: 95px;
+    }
+
     #buyORdecline {
         width: calc(100% - 30px);
         background: #e1e1e1;
@@ -189,18 +194,19 @@
     }
 
     .toggle2 {
-        background: white;
-        display: block;
-        font-size: 14px;
-        cursor: pointer;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        margin: 15px;
-        width: 85px;
-        text-align: center;
-        border-radius: 5px;
-        padding: 3px 0px;
+      background: white;
+      display: block;
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      margin: 15px;
+      width: 75px;
+      height: 26px;
+      text-align: center;
+      border-radius: 5px;
+      padding: 18px 0px;
     }
 
     #toggle2:checked + .toggle_target {
