@@ -29,6 +29,42 @@
     position: relative;
 }
 
+.posts_return {
+    margin: 25px 3.2%;
+    width: 93.6%;
+    height: 110px;
+    background: #FF851B;
+    border-radius: 7px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    display: inline-block;
+    float: left;
+    position: relative;
+}
+
+.posts_false_return {
+    margin: 25px 3.2%;
+    width: 93.6%;
+    height: 110px;
+    background: #FF4136;
+    border-radius: 7px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    display: inline-block;
+    float: left;
+    position: relative;
+}
+
+.posts_complete {
+    margin: 25px 3.2%;
+    width: 93.6%;
+    height: 110px;
+    background: #2ECC40;
+    border-radius: 7px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    display: inline-block;
+    float: left;
+    position: relative;
+}
+
 .post_title {
     width: 85%;
     height: 35px;

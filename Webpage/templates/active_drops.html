@@ -70,6 +70,7 @@
             var s_locations = ({{ s_location|tojson }});
             var s_dates = ({{ s_date|tojson }});
             var s_data = ({{ s_txids|tojson }});
+            var s_waiting = ({{s_return|tojson}})
             var a_data = ({{ a_txids|tojson }});
             var a_name = ({{ a_names|tojson }});
             var a_prices = ({{ a_price|tojson }});
@@ -108,8 +109,14 @@
             cost = s_prices[i]
             place = s_locations[i]
             date = s_dates[i]
+            waiting = s_waiting[i]
+            class_var = posts
+            if waiting == 'waiting'{
+              class_var = 'posts_return'
+              i_name = '<b>ITEM RETURNED PLEASE PICK UP</b> - ' + i_name
+            }
             i = i+1
-            data = ('<a class="posts" href="' +
+            data = ('<a class="'+class_var+'" href="' +
               "{{ url_for('transactionpage', chat_id = item)}}" +
               '"><h3 class="post_title">' + i_name +
               '</h3><h3 class="cost">' + cost + '</h3><p>Selling to ' +

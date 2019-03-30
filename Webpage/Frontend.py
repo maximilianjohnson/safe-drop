@@ -170,6 +170,7 @@ def active_drops():
     s_price = []
     s_location = []
     s_date = []
+    s_return = []
 
     a_txids = []
     a_names = []
@@ -180,21 +181,26 @@ def active_drops():
     for item in s_txid:
         txid = str(item)
         txid = txid[2:-3]
-        if (search_OrderValue('B_username', txid=txid)) != 'None':
-            s_txids.append(txid)
-            s_names.append(search_OrderValue('I_name', txid=txid))
-            s_other_user.append(search_OrderValue('B_username', txid=txid))
-            s_price.append(search_OrderValue('Cost', txid=txid))
-            s_location.append(search_OrderValue('Location', txid=txid))
-            s_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
-        else:
-            txid = str(item)
-            txid = txid[2:-3]
-            a_txids.append(txid)
-            a_names.append(search_OrderValue('I_name', txid=txid))
-            a_price.append(search_OrderValue('Cost', txid=txid))
-            a_location.append(search_OrderValue('Location', txid=txid))
-            a_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
+        if (search_OrderValue('status', txid = txid) != "TRANSACTION COMPLETE"):
+            if (search_OrderValue('B_username', txid=txid)) != 'None':
+                s_txids.append(txid)
+                s_names.append(search_OrderValue('I_name', txid=txid))
+                s_other_user.append(search_OrderValue('B_username', txid=txid))
+                s_price.append(search_OrderValue('Cost', txid=txid))
+                s_location.append(search_OrderValue('Location', txid=txid))
+                s_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
+                if (search_OrderValue('status', txid = txid) == "ITEM RETURNED"):
+                    s_return.append('waiting')
+                else:
+                    s_return.append('else')
+            else:
+                txid = str(item)
+                txid = txid[2:-3]
+                a_txids.append(txid)
+                a_names.append(search_OrderValue('I_name', txid=txid))
+                a_price.append(search_OrderValue('Cost', txid=txid))
+                a_location.append(search_OrderValue('Location', txid=txid))
+                a_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
 
     b_txid = search_OrderValue('TXID', B_username = current_user.username)
     b_txids = []
@@ -206,12 +212,13 @@ def active_drops():
     for item in b_txid:
         txid = str(item)
         txid = txid[2:-3]
-        b_txids.append(txid)
-        b_names.append(search_OrderValue('I_name', txid=txid))
-        b_other_user.append(search_OrderValue('S_username', txid=txid))
-        b_price.append(search_OrderValue('Cost', txid=txid))
-        b_location.append(search_OrderValue('Location', txid=txid))
-        b_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
+        if (search_OrderValue('status', txid = txid) != "TRANSACTION COMPLETE"):
+            b_txids.append(txid)
+            b_names.append(search_OrderValue('I_name', txid=txid))
+            b_other_user.append(search_OrderValue('S_username', txid=txid))
+            b_price.append(search_OrderValue('Cost', txid=txid))
+            b_location.append(search_OrderValue('Location', txid=txid))
+            b_date.append(date_time(search_OrderValue('date_initialized', txid=txid)))
     currentuser = current_user.username
     return render_template('active_drops.html', FirstName=FirstName, \
         LastName = LastName, s_txids=s_txids, b_txids = b_txids,\
@@ -219,7 +226,7 @@ def active_drops():
         s_price = s_price, s_location = s_location, s_date = s_date,\
         b_other_user = b_other_user, b_price = b_price, b_location = b_location\
         , b_date = b_date, a_price = a_price, a_location = a_location\
-        , a_date = a_date, a_txids=a_txids, a_names=a_names)
+        , a_date = a_date, a_txids=a_txids, a_names=a_names, s_return=s_return)
 
 @app.route('/active_drops_<string:chat_id>_delete/')
 @login_required

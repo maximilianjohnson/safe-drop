@@ -89,7 +89,17 @@
               opendate = open_dates[i]
               closedate = close_dates[i]
               i = i+1
-              data = ('<a class="posts"><h3 class="post_title">' + i_name +
+              class_var = posts
+              if status == 'ITEM RETURNED'{
+                class_var = 'posts_return'
+              }
+              if status == 'FALSE RETURN'{
+                class_var = 'posts_false_return'
+              }
+              if status == '"TRANSACTION COMPLETE"'{
+                class_var = 'posts_complete'
+              }
+              data = ('<a class="'+class_var+'"><h3 class="post_title">' + i_name +
                 '</h3><h3 class="cost">' + cost + '</h3><p>'+ b_user+' buying from ' +
                 s_user + ' <b>Status:</b> ' + status + '</p><h3 class="location">' + place +
                 '</h3><h3 class="date"> Open Date: ' + opendate + 'Close Date:'+ closedate +'</h3></a>');
