@@ -2,9 +2,9 @@
 <html>
 
 <head>
-  <title>New Drop</title>
+  <title>Buy Page</title>
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
-  <link rel="stylesheet" type="text/css" href="../static/buyPage2.css">
+  <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,8 +14,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <div class="nav">
     <h1 class="title">SafeDrop</h1>
+    <img id="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
     <label class="toggle" for="toggle">&#9776;</label>
-    <input type="checkbox" id="toggle"/>
+    <input type="checkbox" id="toggle" />
     <div class="user">
       <ul>
         <li>
@@ -32,7 +33,7 @@
       <p class="menu_title">{{FirstName}} {{LastName}}</p>
     </div>
     <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
-    <input type="checkbox" id="mobile_toggle"/>
+    <input type="checkbox" id="mobile_toggle" />
     <div class="mobile">
       <ul>
         <li>
@@ -46,66 +47,66 @@
     </div>
   </div>
 
-    <div id="container">
-        <div id="img_container">
-            <div id="big_img">
-              <img src="https://rocket-league.com/content/media/users/avatar/256px/f120263a711533640100.png" id="expandedImg">
-
-            </div>
-            <div class="left">
-                  <button id="left-button">
-                    &larr;
-                  </button>
-                </div>
-            <div class="right">
-                <button id="right-button">
-                    &rarr;
-                  </button>
-
-                </div>
-            <div id="small_img"></div>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-            <script type="text/javascript">
+  <div id="container">
+    <div id="img_container">
+      <div id="big_img">
+        <img src="https://rocket-league.com/content/media/users/avatar/256px/f120263a711533640100.png" id="expandedImg">
+      </div>
+      <div id="scroll_plus_small">
+        <div class="left">
+          <button class="scroll_button" id="left-button" style="background: url(https://image.flaticon.com/icons/svg/8/8747.svg)">
+          </button>
+        </div>
+        <div id="small_img"></div>
+        <div class="right">
+          <button class="scroll_button" id="right-button" style="background: url(https://image.flaticon.com/icons/svg/10/10022.svg)">
+          </button>
+        </div>
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script type="text/javascript">
             var i = 0;
             var urls = ({{url|tojson}})
 
-                  {% for item in url %}
-                  item = urls[i]
-                  i = i+1
-                  data = ('<img src="'+ item +'" alt="item_img" onclick="myFunction(this)">');
-                  console.log(data)
-                  $("div#small_img").append(data);
-                  {% endfor %}
+              {% for item in url %}
+              item = urls[i]
+              i = i+1
+              data = ('<img src="'+ item +'" alt="item_img" onclick="myFunction(this)">');
+              console.log(data)
+              $("div#small_img").append(data);
+              {% endfor %}
 
-            </script>
+      </script>
+    </div>
+
+    <div id="drop_info">
+      <h1 id="post_title">{{i_name}}</h1>
+      <div id="details">
+        <div id="desc_info">
+          <h2 id="desc_title">Description</h2>
+          <pre id="desc">{{i_desc}}</pre>
         </div>
 
-        <div id="drop_info">
-            <h1 id="post_title">{{i_name}}</h1>
-            <div id="details">
-                <div id="desc_info">
-                    <h2 id="desc_title">Description</h2>
-                    <pre id="desc">{{i_desc}}</pre>
-                </div>
-
-                <div id="non_desc_container">
-                    <h2 id="non_desc_title">Drop Details</h2>
-                    <p class="non_desc">${{i_cost}}</p>
-                    <p class="non_desc">{{location}}</p>
-                    <p class="non_desc">{{date_init}}</p>
-                </div>
-                <div id="button">
-                  {% if currentuser != SellerName %}
-                  <form action="" method="POST">
-                    <button type="submit" name="submit" value="submit">Buy</button>
-                  </form>
-                  {% else %}
-                  <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Posting</a>
-                  {% endif %}
-                </div>
+        <div id="non_desc_wrapper">
+          <div id="non_desc_container">
+            <h2 id="non_desc_title">Drop Details</h2>
+            <p class="non_desc">${{i_cost}}</p>
+            <p class="non_desc">{{location}}</p>
+            <p class="non_desc">{{date_init}}</p>
+          </div>
+          <div id="button">
+            {% if currentuser != SellerName %}
+            <form action="" method="POST">
+              <button type="submit" name="submit" value="submit">Buy This Drop</button>
+            </form>
+            {% else %}
+            <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Drop</a>
+            {% endif %}
+          </div>
         </div>
+      </div>
     </div>
-    </div>
+  </div>
 
     <script  src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript">
