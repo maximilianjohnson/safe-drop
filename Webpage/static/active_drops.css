@@ -78,6 +78,20 @@
     text-overflow: ellipsis;
 }
 
+#history_status {
+    font-size: 20px;
+    position: absolute;
+    margin: 0px 92px;
+    color: black;
+    width: 85%;
+    height: 30px;
+    position: absolute;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .cost {
     font-size: 20px;
     position: absolute;
@@ -130,6 +144,57 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+
+.posts_false_return p {
+    font-size: 23px;
+    position: absolute;
+    top: 45px;
+    left: 9px;
+    font-weight: 300;
+    color: black;
+    width: 700px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.posts_complete p {
+    font-size: 23px;
+    position: absolute;
+    top: 45px;
+    left: 9px;
+    font-weight: 300;
+    color: black;
+    width: 700px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.posts_return p {
+    font-size: 23px;
+    position: absolute;
+    top: 45px;
+    left: 9px;
+    font-weight: 300;
+    color: black;
+    width: 700px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#drop_history {
+    width: 807.5px;
+    margin: 30px auto;
+}
+
 
 @media only screen and (max-width: 1300px) {
     .post_title {

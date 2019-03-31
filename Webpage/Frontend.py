@@ -431,6 +431,7 @@ def history():
     h_date_open = []
     h_date_close = []
     h_status = []
+    h_txstatus = []
     h_url = []
     for item in h_txid:
         txid = str(item)
@@ -443,13 +444,15 @@ def history():
         h_location.append(item[8])
         h_date_open.append(item[6])
         h_date_close.append(str(item[12]))
-        h_status.append(dropStatus(item[1], current_user.username, msg=True))
+        h_txstatus.append(item[9])
+        h_status.append(search_OrderValue('status',item[1]))
         h_url.append(item[10])
     currentuser = current_user.username
     return render_template('history.html', FirstName=FirstName, currentuser=currentuser, \
         LastName = LastName, h_txids=h_txids, b_names=b_names, s_names=s_names,\
         h_item=h_item, h_price=h_price, h_location=h_location, h_url=h_url,\
-        h_date_open=h_date_open, h_date_close=h_date_close, h_status=h_status)
+        h_date_open=h_date_open, h_date_close=h_date_close,\
+        h_status=h_status, h_txstatus = h_txstatus)
 
 
 @app.route('/browse_<int:page_id>/')

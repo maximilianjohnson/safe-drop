@@ -110,10 +110,10 @@
             place = s_locations[i]
             date = s_dates[i]
             waiting = s_waiting[i]
-            class_var = posts
-            if waiting == 'waiting'{
+            class_var = 'posts'
+            if (waiting == 'waiting'){
               class_var = 'posts_return'
-              i_name = '<b>ITEM RETURNED PLEASE PICK UP</b> - ' + i_name
+              i_name = '<b>ITEM RETURNED</b> - ' + i_name
             }
             i = i+1
             data = ('<a class="'+class_var+'" href="' +

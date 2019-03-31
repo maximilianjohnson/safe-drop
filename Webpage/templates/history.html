@@ -66,7 +66,8 @@
             var open_dates = ({{ h_date_open|tojson }});
             var h_urls = ({{ h_url|tojson }});
             var h_txid = ({{ h_txids|tojson }});
-            var h_statuses = ({{ h_status|tojson }});
+            var h_statuses = ({{ h_txstatus|tojson }});
+            var status_msg = ({{h_status|tojson}})
 
               {% for item in h_txids %}
               i_name = h_item[i]
@@ -84,25 +85,26 @@
 
               txid = h_txid[i]
               status = h_statuses[i]
+              status_message = status_msg[i]
               cost = h_prices[i]
               place = h_locations[i]
               opendate = open_dates[i]
               closedate = close_dates[i]
               i = i+1
-              class_var = posts
-              if status == 'ITEM RETURNED'{
+              class_var = 'posts'
+              if (status == 'ITEM RETURNED'){
                 class_var = 'posts_return'
               }
-              if status == 'FALSE RETURN'{
+              if (status == 'FALSE RETURN'){
                 class_var = 'posts_false_return'
               }
-              if status == '"TRANSACTION COMPLETE"'{
+              if (status == "TRANSACTION COMPLETE"){
                 class_var = 'posts_complete'
               }
               data = ('<a class="'+class_var+'"><h3 class="post_title">' + i_name +
-                '</h3><h3 class="cost">' + cost + '</h3><p>'+ b_user+' buying from ' +
-                s_user + ' <b>Status:</b> ' + status + '</p><h3 class="location">' + place +
-                '</h3><h3 class="date"> Open Date: ' + opendate + 'Close Date:'+ closedate +'</h3></a>');
+                '</h3><h3 class="cost"> $' + cost + '</h3><p>'+ b_user+' buying from ' +
+                s_user + ' </p><p id="history_status"><b>Status:</b> ' + status_message + '</p><h3 class="location">' + place +
+                '</h3><h3 class="date"> Open Date: ' + opendate + ' Close Date:'+ closedate +'</h3></a>');
               console.log(data)
               $("div#drop_history").append(data);
               {% endfor %}

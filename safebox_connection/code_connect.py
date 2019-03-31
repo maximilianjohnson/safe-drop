@@ -215,12 +215,23 @@ def dropStatus(txid, user, msg = None, status = None):
     drop_status = search_OrderValue('status', txid = txid)
     b_user = search_OrderValue('B_username', txid = txid)
     s_user = search_OrderValue('S_username', txid = txid)
-
     if drop_status == "Buyer_Seller_TX_Confirm":
         confirm_msg = "Sale Confirmed!"
         tx_status = "Buyer_Seller_TX_Confirm"
 
-    elif drop_status != "Buyer_Seller_TX_Confirm":
+    elif drop_status == "ITEM RETURNED":
+        confirm_msg = "The item has been successfully returned by the buyer."
+        tx_status = "ITEM RETURNED"
+
+    elif drop_status == "FALSE RETURN":
+        confirm_msg = "The buyer attempted a false return, transaction completed."
+        tx_status = "ITEM FALSE RETURNED"
+
+    elif drop_status == "TRANSACTION COMPLETE":
+        confirm_msg = "Transaction complete!"
+        tx_status = "TRANSACTION COMPLETE"
+
+    else:
         if user == b_user:
 
             if drop_status == "Buyer_TX_Confirm":
