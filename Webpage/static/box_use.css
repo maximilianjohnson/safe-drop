@@ -31,6 +31,17 @@
   margin-right: auto;
 }
 
+#return_disclaimer {
+    color: dimgrey;
+    font-size: 12px;
+    position: absolute;
+    bottom: 65px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #request {
   border-radius: 7px;
   font-size: 20px;
@@ -47,6 +58,25 @@
   right: 0px;
   margin-left: auto;
   margin-right: auto;
+}
+
+
+#return_button {
+    border-radius: 7px;
+    font-size:20px;
+    padding: 10px 0px;
+    width: 400px;
+    display: inline-block;
+    color: black;
+    background-color: #FF4500;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: 15px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media only screen and (max-width: 750px) {
