@@ -5,7 +5,7 @@
 .container {
   width: 41vw;
   display: inline-block;
-  margin: 50px 3vw;
+  margin: 40px 3vw;
 }
 
 .main_header {
@@ -15,10 +15,11 @@
   border-width: 3px;
   border-color: #000000;
   text-align: center;
+  margin-bottom: 15px;
 }
 
 .posts {
-  margin: 25px 3.2%;
+  margin: 12.5px 3.2%;
   width: 93.6%;
   height: 110px;
   background: #fff;
