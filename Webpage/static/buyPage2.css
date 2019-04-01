@@ -13,6 +13,7 @@
     height: calc(100% - 60px);
 }
 
+
 #post_title {
     float: left;
     font-size: 45px;
@@ -73,35 +74,69 @@
     margin: 17px 0px 0px 230px;
 }
 
-#button a {
-    text-decoration: none;
-    color: black;
-    font-size: 20px;
-}
-
-#button button {
+#buy_button button {
     border-radius: 7px;
+    width: 300px;
+    height: 30px;
     font-size:20px;
+    padding: 10px 0px;
     color: black;
-    background-color: white;
+    background-color: #36DC52;
     border: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: -90px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
+
+a.button {
+    text-decoration: none;
+    border-radius: 7px;
+    width: 300px;
+    height: 30px;
+    font-size:20px;
+    padding: 10px 0px;
+    color: black;
+    background-color: #FF4500;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: -90px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#map_container{
+  position: absolute;
+
+  bottom:-200px;
+  left: 80px;
+  width:500px;
+  margin: 0px 0px;
+}
 
 #img_container {
     position: absolute;
 
     left: 0px;
-    top: 0px;
-    margin: 30px 60px;
-    width: 600px;
+    top: 40px;
+    margin: 0px 30px;
+    width: 500px;
     height: calc(100% - 60px);
     text-align: center;
 }
 
 #big_img {
-    margin-top: 40px;
-    line-height: 500px;
+    margin-top: 0px;
+    line-height: 300px;
 }
 
 #big_img img {
@@ -114,7 +149,7 @@
 
 #small_img {
     width: 500px;
-    line-height: 125px;
+    line-height: 0px;
     display: inline-block;
     white-space: nowrap;
     overflow-x: hidden;
@@ -136,11 +171,11 @@
 .left {
     position: absolute;
     left: 0px;
-    bottom: 90px;
+    bottom: 130px;
 }
 
 .right {
     position: absolute;
     right: 0px;
-    bottom: 90px;
+    bottom: 130px;
 }

@@ -78,8 +78,13 @@
            <p>Location: </p>
           </td>
           <td>
-            <input type="text" id='ilocation' name="location" placeholder="Enter a location for your item..." required>
+            <select type="list" id='ilocation' name="location" placeholder="Select your SafeDrop location." required>
+              <option value="SafeDrop UBC">SafeDrop UBC</option>
+            </select>
           </td>
+          <div id="map_container">
+          <div id='map' style='width: 400px; height: 300px;'></div>
+          </div>
         </tr>
 
 
@@ -134,7 +139,6 @@
                 I_cost = document.getElementById("icost").value
                 I_desc = document.getElementById("idescription").value
                 place = document.getElementById("ilocation").value
-                console.log(image_list)
                 socket.emit( 'confirm_drop', {
                   image_list: image_list,
                   I_name : I_name,
@@ -147,7 +151,97 @@
 
 
         </script>
-      </body>
 
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+          <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+            <style>
+              #map { position:absolute; bottom: 0px; left: 0px; width:100%; }
+            </style>
+
+            <style>
+              .mapboxgl-popup {
+                max-width: 170px;
+                font: 12px/15px 'Arial', Helvetica, sans-serif;
+              }
+            </style>
+
+          <script>
+            mapboxgl.accessToken = 'pk.eyJ1Ijoic2FmZWRyb3AiLCJhIjoiY2p0eGowaTN5MjI3ZDN5cXV1NTQzNHI1aiJ9.ngYUAqtTR4ErRpUCh9XQqg';
+            var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-123.244826, 49.262235],
+            zoom: 14.15
+            });
+            map.on('load', function () {
+            // Add a layer showing the places.
+            map.addLayer({
+            "id": "places",
+            "type": "symbol",
+            "source": {
+            "type": "geojson",
+            "data": {
+            "type": "FeatureCollection",
+            "features": [{
+            "type": "Feature",
+            "properties": {
+            "title": "SafeDrop UBC",
+            "description": "<p>Design and Innovation Day</p>",
+            "icon": "bank"
+            },
+            "geometry": {
+              "type": "Point",
+              "coordinates": [-123.245496, 49.262435]
+              }
+              }]
+            }
+            },
+            "layout": {
+              "icon-image": "{icon}-15",
+              "icon-size": 1.7,
+              "icon-allow-overlap": true,
+              "text-field": "{title}",
+              "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+              "text-offset": [0, 0.6],
+              "text-anchor": "top",
+            },
+            "paint": {
+            "icon-color" : "#FFFF00"
+            },
+            });
+
+            // When a click event occurs on a feature in the places layer, open a popup at the
+            // location of the feature, with description HTML from its properties.
+            map.on('click', 'places', function (e) {
+            var coordinates = e.features[0].geometry.coordinates.slice();
+            var description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+            });
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'places', function () {
+            map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'places', function () {
+            map.getCanvas().style.cursor = '';
+            });
+            });
+
+          </script>
+
+      </body>
 
 </html>
