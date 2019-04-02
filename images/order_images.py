@@ -37,12 +37,12 @@ def newImage (url_id, TXID, user, url):
 #Searchable perameters
 #Order number, TXID, Seller username, buyer username, item name,
 #cost, location, date initialized
-def search_allImages(TXID=(None), UN=(None)):
+def search_allImages(url_id=(None), UN=(None)):
     conn=psycopg2.connect("dbname='SafeDrop_OrderImages' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
-    cur.execute("SELECT * FROM images WHERE TXID=%s OR\
+    cur.execute("SELECT * FROM images WHERE url_id=%s OR\
                 username=%s",\
-                (TXID, UN))
+                (url_id, UN))
     rows = cur.fetchall()
     conn.close()
     return rows

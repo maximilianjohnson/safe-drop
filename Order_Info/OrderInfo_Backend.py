@@ -33,7 +33,7 @@ def connect_OrderInfo_db():
 #connect_OrderInfo_db()
 
 #Function uses values to add new order to psycopg2 database
-def newOrder (S_username, B_username, I_name, desc, Cost, Location):
+def newOrder (S_username, B_username, I_name, desc, Cost, Location, img_url=None):
     connect_OrderInfo_db()
     conn=psycopg2.connect("dbname='SafeDrop_Orders' user='postgres' password='postgre123' host='localhost' port = '5433'")
     cur=conn.cursor()
@@ -44,9 +44,14 @@ def newOrder (S_username, B_username, I_name, desc, Cost, Location):
     status = 'None'
     #while check_dup_id(ID) == 1: #commented out due to redundancy
     #    ID = uuid.uuid4()
-    cur.execute("INSERT INTO orderInfo VALUES(default, %s, %s, %s, %s, %s, %s, %s, \
-                %s, %s, default, %s, %s)", (TXID, B_username, S_username, I_name, desc, \
-                date_init, Cost, Location, status, date_modified, date_resolved))
+    if img_url == None:
+        cur.execute("INSERT INTO orderInfo VALUES(default, %s, %s, %s, %s, %s, %s, %s, \
+                    %s, %s, default, %s, %s)", (TXID, B_username, S_username, I_name, desc, \
+                    date_init, Cost, Location, status, date_modified, date_resolved))
+    else:
+        cur.execute("INSERT INTO orderInfo VALUES(default, %s, %s, %s, %s, %s, %s, %s, \
+                    %s, %s, %s, %s, %s)", (TXID, B_username, S_username, I_name, desc, \
+                    date_init, Cost, Location, status, img_url, date_modified, date_resolved))
     conn.commit()
     conn.close()
     return TXID
@@ -150,7 +155,7 @@ def statusUpdate(status, TXID):
 
 def repostOffer(txid):
     S_username = search_OrderValue('S_username', txid=txid)
-    B_username = None
+    B_username = 'None'
     I_name = search_OrderValue('I_name', txid=txid)
     desc = search_OrderValue('description', txid=txid)
     Cost = search_OrderValue('Cost', txid=txid)

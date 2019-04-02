@@ -74,7 +74,11 @@
       for (i = 0; i < msgdata.length; i++) {
       dataset = msgdata[i]
       time = msgtime[i]
-      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + '  -  -  -  <i>'+ time + '</i> <br>');
+      msg = dataset[5]
+      if (msg == null){
+        msg = 'Transaction created. Hello!'
+      }
+      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + msg + '  -  -  -  <i>'+ time + '</i> <br>');
       console.log(out)
       $("div.old_messages").append(out);
       }
@@ -141,9 +145,12 @@
       </div>
 
       <div id="buyORdecline">
-        {% if code_msg != "Request Box Access Code" %}
+        {% if code_msg == "Confirm Sale." %}
         <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
-        <a id="confirm" href="{{request_code}}">{{code_msg}}</a>
+        <a id="confirm" href="{{request_code}}">Confirm Sale</a>
+        {% elif code_msg == "Confirm Buy."%}
+        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a id="confirm" href="{{request_code}}">Confirm Buy</a>
         {% else %}
         <a id="confirm" style="width: 455px;" href="{{request_code}}">{{code_msg}}</a>
         {%endif%}
