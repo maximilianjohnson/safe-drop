@@ -120,6 +120,21 @@
   font-family: 'Lato', sans-serif;
 }
 
+#search_results{
+  background: white;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 7px;
+}
+
 #page_container {
   background: white;
   text-align: center;
