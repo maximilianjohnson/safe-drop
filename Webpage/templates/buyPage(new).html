@@ -102,15 +102,17 @@
                 </div>
 
 
+                <div id="button">
                   {% if currentuser != SellerName %}
-                  <div id="buy_button">
                   <form action="" method="POST">
-                    <button type="submit" name="submit" value="submit">Buy</button>
+                    <button type="submit" name="submit" value="submit">Buy This Drop</button>
                   </form>
-                  </div>
                   {% else %}
-                  <a href="{{url_for('deleteTX', chat_id=txid)}}" class="button">Delete This Posting</a>
+                  <div id="delete_container">
+                    <a href="{{url_for('deleteTX', chat_id=txid)}}" id="delete">Delete This Drop</a>
+                  </div>
                   {% endif %}
+                </div>
 
         </div>
       </div>

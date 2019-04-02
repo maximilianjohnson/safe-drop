@@ -67,32 +67,39 @@
 }
 
 #button {
-    background: white;
-    border-radius: 7px;
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 17px 0px 0px 230px;
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 15px;
+  margin-left: 225px;
+  height: 30px;
+  width: 300px;
+  text-align: center;
 }
 
-#buy_button button {
-    border-radius: 7px;
-    width: 300px;
-    height: 30px;
-    font-size:20px;
-    padding: 10px 0px;
-    color: black;
-    background-color: #36DC52;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-    bottom: -90px;
-    left: 0px;
-    right: 0px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+#button a {
+  text-decoration: none;
+  color: black;
+  font-size: 20px;
+
 }
 
+#delete_container {
+  background: #FF4500;
+  border-radius: 7px;
+  padding: 10px 0px;
+}
+
+#button button {
+  border-radius: 7px;
+  font-size: 20px;
+  color: black;
+  background-color: #36DC52;
+
+  border: none;
+  cursor: pointer;
+  height: 50px;
+  width: 300px;
+}
 
 a.button {
     text-decoration: none;
@@ -102,7 +109,7 @@ a.button {
     font-size:20px;
     padding: 10px 0px;
     color: black;
-    background: #FF4500;
+
     border: none;
     cursor: pointer;
     position: absolute;
@@ -113,6 +120,8 @@ a.button {
     margin-right: auto;
     text-align: center;
 }
+
+
 
 #map_container{
   position: absolute;
