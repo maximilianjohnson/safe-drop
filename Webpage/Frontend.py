@@ -31,6 +31,7 @@ from chat_logs.chat_log import newMsg, searchMsg
 from safebox_connection.code_connect import requestCode, newBoxAssignment, dropStatus, search_ChatValue, attemptCode, codeResult
 from images.order_images import newImage, search_allImages
 from safebucks.currency import searchBucks, add100Bucks, addUserBucks
+from difflib import SequenceMatcher
 
 app = Flask(__name__)
 
@@ -455,10 +456,61 @@ def history():
         h_status=h_status, h_txstatus = h_txstatus)
 
 
-@app.route('/browse_<int:page_id>/')
+@app.route('/browse_<int:page_id>/', methods=['GET', 'POST'])
 def browse(page_id):
     FirstName = str(search_value('first_name', str(current_user.username)))
     LastName = str(search_value('last_name', current_user.username))
+
+    if request.method == "POST":
+        searchValue = request.form.get("Search")
+
+        SellerName = []
+        ItemName = []
+        ItemDesc = []
+        ItemCost = []
+        Location = []
+        date_post = []
+        txid = []
+        url = []
+
+        load_start = (page_id - 1)*10
+        load_pages = []
+        load_txids = browseRecent()
+
+        load_pages = load_txids[load_start:(load_start+10)]
+
+        for item in load_pages:
+            if item[3] != None:
+                if SequenceMatcher(None, item[4], searchValue).ratio() > 0.6:
+                    SellerName.append(item[3])
+                    ItemName.append(item[4])
+                    ItemDesc.append(item[5])
+                    ItemCost.append(item[7])
+                    Location.append(item[8])
+                    date_post.append(date_time(item[6]))
+                    txid.append(item[1])
+                    img = search_allImages(TXID=item[1])
+                    try:
+                        img = img[0]
+                        img = img[3]
+                        img = str(img)
+                    except IndexError:
+                        img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                    url.append(img)
+
+
+            else:
+                pass
+        if len(ItemName) == 0:
+            searches = "empty"
+        else:
+            searches = "values"
+        return render_template("browse.html", FirstName = FirstName, \
+        LastName = LastName, SellerName=SellerName, \
+        ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
+        Location=Location, date_post=date_post, txid=txid, url=url, searches=searches)
+
+
 
     SellerName = []
     ItemName = []

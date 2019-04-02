@@ -50,11 +50,24 @@
 
 
   <form id="search_container" action="" method="post">
-      <input id="search"type="text" name="Search" placeholder="Search!" required>
+      <input id="search" type="text" name="Search" placeholder="Search!" required>
   </form>
 
 
   <div class="browse_main"></div>
+  {%if searches == "empty"%}
+  <div id="search_results">
+
+      <h3>Your search returned no results! Try a broader search term!</h3>
+      <a href="{{ url_for('browse', page_id=1) }}">Reload the browse page</a>
+  </div>
+  {%elif searches == "values"%}
+  <div id="search_results">
+
+      <a href="{{ url_for('browse', page_id=1) }}">Reload the browse page</a>
+
+  </div>
+  {%endif%}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript">
@@ -89,11 +102,11 @@
     </script>
 
   <div id="page_container">
-    <a href="#" class="page" id="page_1">1</a>
-    <a href="#" class="page">2</a>
-    <a href="#" class="page">3</a>
-    <a href="#" class="page">4</a>
-    <a href="#" class="page">5</a>
+    <a href="{{url_for('browse', page_id=1)}}" class="page" id="page_1">1</a>
+    <a href="{{url_for('browse', page_id=2)}}" class="page">2</a>
+    <a href="{{url_for('browse', page_id=3)}}" class="page">3</a>
+    <a href="{{url_for('browse', page_id=4)}}" class="page">4</a>
+    <a href="{{url_for('browse', page_id=5)}}" class="page">5</a>
   </div>
 
 </body>
