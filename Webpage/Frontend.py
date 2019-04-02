@@ -37,7 +37,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5433/SafeDrop_Logins'
+localhost:5432/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -45,7 +45,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -102,19 +102,30 @@ def signup():
         password = request.form["password"]
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
-        email = request.form["email"]
-        age = request.form["age"]
-        address = request.form["address"]
-        city = request.form["city"]
-        province = request.form["province"]
-        country = request.form["country"]
-        postal_code = request.form["postal_code"]
-        newuser = UserLogins(username = username)
-        newuser.set_password(password)
-        db.session.add(newuser)
-        insert_newprofile_up_db(first_name, last_name, username, email, age, \
-        address, city, province, country, postal_code)
-        db.session.commit()
+        email = None
+        age = None
+        address = None
+        city = "Vancouver"
+        province = "BC"
+        country = "Canada"
+        postal_code = None
+
+        if request.form["signup_button"] == "signup":
+            newuser = UserLogins(username = username)
+            newuser.set_password(password)
+            db.session.add(newuser)
+            insert_newprofile_up_db(first_name, last_name, username, email, age, \
+            address, city, province, country, postal_code)
+            db.session.commit()
+            user = UserLogins.query.filter_by(username=username).first()
+            if user is None or not user.check_password(password):
+                message='Invalid Credentials. Please try again.'
+                return render_template("login.html", error = message)
+            else:
+                login_user(user)
+                return redirect(url_for('browse', page_id = 1))
+
+            return redirect(url_for('profile'))
     return render_template("signup.html")
 
 
@@ -124,15 +135,17 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('browse', page_id = 1))
     if request.method == 'POST':
-        userentry = request.form['username']
-        passentry = request.form['password']
-        user = UserLogins.query.filter_by(username=userentry).first()
-        if user is None or not user.check_password(passentry):
-            message='Invalid Credentials. Please try again.'
-            return render_template("login.html", error = message)
-        else:
-            login_user(user)
-            return redirect(url_for('browse', page_id = 1))
+        userentry = request.form['userentry']
+        passentry = request.form['passentry']
+
+        if request.form["login_value"] == "login":
+            user = UserLogins.query.filter_by(username=userentry).first()
+            if user is None or not user.check_password(passentry):
+                message='Invalid Credentials. Please try again.'
+                return render_template("login.html", error = message)
+            else:
+                login_user(user)
+                return redirect(url_for('browse', page_id = 1))
     return render_template("login.html", error = message)
 
 @app.route('/profile/')

@@ -123,7 +123,7 @@ h2 {
 
 
 
-.container input {
+.container input, select, option {
   display: block;
   width: 450px;
   border: 1px solid #cfcfcf;
@@ -135,9 +135,14 @@ h2 {
   font-family: 'Lato', sans-serif;
 }
 
+
 .signup_button {
     display: block;
-    margin: 30px auto;
+    width: 40%;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
     -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
     border-radius: 7px;
@@ -180,7 +185,7 @@ h2 {
         width: calc(100vw - 50px);
     }
 
-    .container input {
+    .container input, select, option {
         width: calc(100vw - 250px);
     }
 

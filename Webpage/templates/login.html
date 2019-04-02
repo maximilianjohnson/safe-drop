@@ -22,67 +22,48 @@
             <div id="input_container">
                 <div class="stoopid">
                     <label class="label_text" for="Username">Username:</label>
-                    <input type="text" placeholder="Username" name="username" value="{{request.form.username }}" required/>
+                    <input type="text" placeholder="Username" name="userentry" value="{{request.form.username }}" required/>
                 </div>
 
                 <div class="stoopid" id="password">
                     <label class="label_text" for="Password">Password:</label>
-                    <input type="password" placeholder="Password" name="password" value="" required/>
+                    <input type="password" placeholder="Password" name="passentry" value="" required/>
                 </div>
 
             </div>
-            <button class="login_button" type="submit">Login</button>
+            <button class="login_button" name="login_value" type="submit" value="login">Login</button>
         </form>
     </div>
 
 </div>
 
 <div class="box">
-  <h2 class="box_header">New user? Sign up for a SafeDrop profile below.</h2>
     <div class="container">
-    <form action="" method="post">
+      <h2 class="box_header">New user? Sign up for a SafeDrop profile below.</h2>
+    <form action="{{ url_for('signup') }}" method="post">
         <label class=signup_label>Username: </label>
-        <input type="username" placeholder="Username" name="username" value="" min = "4" max = "30" required>
+        <input type="text" placeholder="Username" name="username" value="" min = "4" max = "30" required>
         <br>
         <label class=signup_label>Password: </label>
-        <input type="password" placeholder="Password" name="password" value="" min = "8" max = "32" required>
+        <input type="text" placeholder="Password" name="password" value="" min = "8" max = "32" required>
         <br>
         <label class=signup_label>First Name: </label>
-        <input type="first_name" placeholder="First Name" name="first_name" value="" max = "30" required>
+        <input type="text" placeholder="First Name" name="first_name" value="" max = "30" required>
         <br>
         <label class=signup_label>Last Name: </label>
-        <input type="last_name" placeholder="Last Name" name="last_name" value="" max = "32" required>
+        <input type="text" placeholder="Last Name" name="last_name" value="" max = "32" required>
         <br>
-        <label class=signup_label>Email Address: </label>
-        <input type="email" placeholder="Email" name="email" value="" max = "64" required>
-        <br>
-        <label class=signup_label>Age: </label>
-        <input type="age" placeholder="Age" name="age" value="" max = "3" required>
-        <br>
-        <label class=signup_label>Address: </label>
-        <input type="address" placeholder="Address" name="address"  value="" max = "50" required>
-        <br>
-        <label class=signup_label>City: </label>
-        <input type="city" placeholder="City of Residence" name="city" value="" min = "3" max = "32" required>
-        <br>
-        <label class=signup_label>Province/State: </label>
-        <input type="province" placeholder="Province" name="province" value="" min = "4" max = "30" required>
-        <br>
-        <label class=signup_label>Country: </label>
-        <input type="country" placeholder="Country" name="country" value="" min = "4" max = "32" required>
-        <br>
-        <label class=signup_label>Postal Code: </label>
-        <input type="postal_code" placeholder="Postal Code" name="postal_code" value="" min = "6" max = "8" required>
-
+        <label class=signup_label>Location: </label>
+        <select type="list" name="city" placeholder="Select your location:" required>
+          <option value="Vancouver">Vancouver, BC</option>
+        </select>
+        <button class="signup_button" type="submit" name="signup_button" value="signup">Signup</button>
     </form>
 
 
   </div>
 
 </div>
-    <div class="button">
-        <button class="signup_button" type="submit">Signup</button>
-      </div>
 
 </body>
 </html>
