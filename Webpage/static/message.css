@@ -117,9 +117,8 @@
     text-decoration: none;
     color: black;
     display: inline-block;
-    width: 220px;
-    background: white;
     height: 62px;
+    width: 220px;
     border-radius: 7px;
     text-align: center;
     color: black;
@@ -127,11 +126,16 @@
     box-shadow: 0px 0px 20px #b9b9b9;
     vertical-align: middle;
 }
+#confirm{
+  line-height: 61px;
+  background: #8CFD8E;
+}
 
 #decline {
-    position: absolute;
-    right: 0px;
-    line-height: 61px;
+  position: absolute;
+  right: 0px;
+  line-height: 61px;
+  background: #FF9494;
 }
 
 .exit {

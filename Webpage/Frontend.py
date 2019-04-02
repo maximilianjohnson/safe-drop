@@ -37,7 +37,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5432/SafeDrop_Logins'
+localhost:5433/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -45,7 +45,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -278,12 +278,20 @@ def transactionpage(chat_id):
     sell_user = search_OrderValue('S_username', txid = chat_id)
     date_init = date_time(search_OrderValue('date_initialized', txid = chat_id))
     oldMsg = searchMsg(chat_id)
+    oldMsgTime = []
+    for item in oldMsg:
+        try:
+            oldMsgTime.append(date_time(item[6]))
+        except TypeError:
+            oldMsgTime.append('<i>time not available</i>')
+
+
     return render_template('message.html', currentuser = \
     str(current_user.username), FirstName=FirstName, LastName=LastName, \
     chatid = chat_id, item_name=item_name, location = location, \
     item_desc=item_desc, item_cost=item_cost, buy_user=buy_user, \
     sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
-    request_code = request_code, code_msg = code_msg)
+    request_code = request_code, code_msg = code_msg, oldMsgTime=oldMsgTime)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
