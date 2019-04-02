@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset='utf-8' />
 
 </head>
 <body>
@@ -47,24 +48,27 @@
     </div>
   </div>
 
-  <div id="container">
-    <div id="img_container">
-      <div id="big_img">
-        <img src="https://rocket-league.com/content/media/users/avatar/256px/f120263a711533640100.png" id="expandedImg">
-      </div>
-      <div id="scroll_plus_small">
-        <div class="left">
-          <button class="scroll_button" id="left-button" style="background: url(https://image.flaticon.com/icons/svg/8/8747.svg)">
-          </button>
-        </div>
-        <div id="small_img"></div>
-        <div class="right">
-          <button class="scroll_button" id="right-button" style="background: url(https://image.flaticon.com/icons/svg/10/10022.svg)">
-          </button>
-        </div>
-      </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-      <script type="text/javascript">
+
+    <div id="container">
+        <div id="img_container">
+            <div id="big_img">
+              <img src="{{url[0]}}" id="expandedImg">
+
+            </div>
+            <div class="left">
+                  <button id="left-button">
+                    &larr;
+                  </button>
+                </div>
+            <div class="right">
+                <button id="right-button">
+                    &rarr;
+                  </button>
+
+                </div>
+            <div id="small_img"></div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script type="text/javascript">
             var i = 0;
             var urls = ({{url|tojson}})
 
@@ -79,30 +83,35 @@
       </script>
     </div>
 
-    <div id="drop_info">
-      <h1 id="post_title">{{i_name}}</h1>
-      <div id="details">
-        <div id="desc_info">
-          <h2 id="desc_title">Description</h2>
-          <pre id="desc">{{i_desc}}</pre>
+        <div id="map_container">
+        <div id='map' style='width: 400px; height: 300px;'></div>
         </div>
 
-        <div id="non_desc_wrapper">
-          <div id="non_desc_container">
-            <h2 id="non_desc_title">Drop Details</h2>
-            <p class="non_desc">${{i_cost}}</p>
-            <p class="non_desc">{{location}}</p>
-            <p class="non_desc">{{date_init}}</p>
-          </div>
-          <div id="button">
-            {% if currentuser != SellerName %}
-            <form action="" method="POST">
-              <button type="submit" name="submit" value="submit">Buy This Drop</button>
-            </form>
-            {% else %}
-            <a href="{{url_for('deleteTX', chat_id=txid)}}">Delete This Drop</a>
-            {% endif %}
-          </div>
+        <div id="drop_info">
+            <h1 id="post_title">{{i_name}}</h1>
+            <div id="details">
+                <div id="desc_info">
+                    <h2 id="desc_title">Description</h2>
+                    <pre id="desc">{{i_desc}}</pre>
+                </div>
+                <div id="non_desc_container">
+                    <h2 id="non_desc_title">Drop Details</h2>
+                    <p class="non_desc">Cost: ${{i_cost}}</p>
+                    <p class="non_desc">Location: {{location}}</p>
+                    <p class="non_desc">Date Posted: {{date_init}}</p>
+                </div>
+
+
+                  {% if currentuser != SellerName %}
+                  <div id="buy_button">
+                  <form action="" method="POST">
+                    <button type="submit" name="submit" value="submit">Buy</button>
+                  </form>
+                  </div>
+                  {% else %}
+                  <a href="{{url_for('deleteTX', chat_id=txid)}}" class="button">Delete This Posting</a>
+                  {% endif %}
+
         </div>
       </div>
     </div>
@@ -135,5 +144,95 @@
           }, "slow");
        });
     </script>
-</body>
+
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      #map { position:absolute; bottom: 0px; left: 0px; width:100%; }
+    </style>
+    <style>
+      .mapboxgl-popup {
+        max-width: 170px;
+        font: 12px/15px 'Arial', Helvetica, sans-serif;
+      }
+    </style>
+
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FmZWRyb3AiLCJhIjoiY2p0eGowaTN5MjI3ZDN5cXV1NTQzNHI1aiJ9.ngYUAqtTR4ErRpUCh9XQqg';
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-123.244826, 49.262235],
+    zoom: 14.15
+    });
+    map.on('load', function () {
+    // Add a layer showing the places.
+    map.addLayer({
+    "id": "places",
+    "type": "symbol",
+    "source": {
+    "type": "geojson",
+    "data": {
+    "type": "FeatureCollection",
+    "features": [{
+    "type": "Feature",
+    "properties": {
+    "title": "SafeDrop UBC",
+    "description": "<p>Design and Innovation Day</p>",
+    "icon": "bank"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-123.245496, 49.262435]
+      }
+      }]
+    }
+    },
+    "layout": {
+      "icon-image": "{icon}-15",
+      "icon-size": 1.7,
+      "icon-allow-overlap": true,
+      "text-field": "{title}",
+      "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+      "text-offset": [0, 0.6],
+      "text-anchor": "top",
+    },
+    "paint": {
+    "icon-color" : "#FFFF00"
+    },
+    });
+
+    // When a click event occurs on a feature in the places layer, open a popup at the
+    // location of the feature, with description HTML from its properties.
+    map.on('click', 'places', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var description = e.features[0].properties.description;
+
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'places', function () {
+    map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'places', function () {
+    map.getCanvas().style.cursor = '';
+    });
+    });
+
+
+    </script>
+
 </html>
