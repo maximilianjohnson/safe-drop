@@ -37,7 +37,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
-localhost:5432/SafeDrop_Logins'
+localhost:5433/SafeDrop_Logins'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
@@ -45,7 +45,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
+db2 = create_engine('postgresql://postgres:postgre123@localhost:5433/ \
 SafeDrop_Users')
 DB2Session = sessionmaker(db2)
 db2session = DB2Session()
@@ -278,12 +278,20 @@ def transactionpage(chat_id):
     sell_user = search_OrderValue('S_username', txid = chat_id)
     date_init = date_time(search_OrderValue('date_initialized', txid = chat_id))
     oldMsg = searchMsg(chat_id)
+    oldMsgTime = []
+    for item in oldMsg:
+        try:
+            oldMsgTime.append(date_time(item[6]))
+        except TypeError:
+            oldMsgTime.append('<i>time not available</i>')
+
+
     return render_template('message.html', currentuser = \
     str(current_user.username), FirstName=FirstName, LastName=LastName, \
     chatid = chat_id, item_name=item_name, location = location, \
     item_desc=item_desc, item_cost=item_cost, buy_user=buy_user, \
     sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
-    request_code = request_code, code_msg = code_msg)
+    request_code = request_code, code_msg = code_msg, oldMsgTime=oldMsgTime)
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
@@ -394,7 +402,7 @@ def buypage(txid):
             return(redirect(url_for('active_drops')))
     else:
         url = []
-        img = search_allImages(TXID=txid)
+        img = search_allImages(search_OrderValue('img_url', txid=txid))
         for item in img:
             try:
                 img = item[3]
@@ -489,7 +497,7 @@ def browse(page_id):
                     Location.append(item[8])
                     date_post.append(date_time(item[6]))
                     txid.append(item[1])
-                    img = search_allImages(TXID=item[1])
+                    img = search_allImages(url_id=item[10])
                     try:
                         img = img[0]
                         img = img[3]
@@ -536,12 +544,11 @@ def browse(page_id):
             Location.append(item[8])
             date_post.append(date_time(item[6]))
             txid.append(item[1])
-            img = search_allImages(TXID=item[1])
+            img = search_allImages(url_id=item[10])
             try:
                 img = img[0]
                 img = img[3]
                 img = str(img)
-                print(img)
             except IndexError:
                 img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
             url.append(img)

@@ -53,7 +53,13 @@
 
     <div class="messages_container">
       <h2 id="connected_to">
-        You have connected to mr.admin!
+        {% if current_user.username == sell_user%}
+        <i>You are selling "{{item_name}}" to {{buy_user}}</i><br>
+        <b>Say hello!</b>
+        {% elif current_user.username == buy_user%}
+        <i>You are buying "{{item_name}}" from {{buy_user}}</i><br>
+        <b>Say hello!</b>
+        {%endif%}
       </h2>
 
       <div id="message_sent_container">
@@ -64,9 +70,15 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script type="text/javascript">
       var msgdata = ({{ oldMsg|tojson }});
+      var msgtime = ({{oldMsgTime|tojson}})
       for (i = 0; i < msgdata.length; i++) {
       dataset = msgdata[i]
-      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + dataset[5] + ' at ' + dataset[6] + ' <br> ');
+      time = msgtime[i]
+      msg = dataset[5]
+      if (msg == null){
+        msg = 'Transaction created. Hello!'
+      }
+      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + msg + '  -  -  -  <i>'+ time + '</i> <br>');
       console.log(out)
       $("div.old_messages").append(out);
       }
@@ -133,11 +145,15 @@
       </div>
 
       <div id="buyORdecline">
-        {% if code_msg != "Request Box Access Code" %}
+        {% if code_msg == "Confirm Sale." %}
         <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
-        {% endif %}
-
-        <a id="confirm" href="{{request_code}}">{{code_msg}}</a>
+        <a id="confirm" href="{{request_code}}">Confirm Sale</a>
+        {% elif code_msg == "Confirm Buy."%}
+        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a id="confirm" href="{{request_code}}">Confirm Buy</a>
+        {% else %}
+        <a id="confirm" style="width: 455px;" href="{{request_code}}">{{code_msg}}</a>
+        {%endif%}
       </div>
 
       <div>
