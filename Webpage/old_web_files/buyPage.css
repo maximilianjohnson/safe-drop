@@ -2,7 +2,6 @@
   position: relative;
   width: 100vw;
   height: calc(100vh - 75px);
-  overflow-x: hidden;
 }
 
 #drop_info {
@@ -26,7 +25,7 @@
   background: white;
   border-radius: 7px;
   width: 600px;
-  height: 340px;
+  height: 378px;
   display: inline-block;
   margin-top: 30px;
 }
@@ -43,6 +42,12 @@
   width: 575px;
   height: 300px;
   white-space: pre-line;
+  overflow: auto;
+}
+
+#non_desc_wrapper {
+  display: inline-block;
+  position: relative;
 }
 
 #non_desc_container {
@@ -54,7 +59,7 @@
   padding: 15px;
   margin: 15px 0px;
   position: absolute;
-  top: 435px;
+  top: 0px;
 }
 
 #non_desc_title {
@@ -68,14 +73,12 @@
 }
 
 #button {
-  position: absolute;
-  top: 655px;
-  left: -10px;
+  background: white;
+  border-radius: 7px;
   display: inline-block;
   padding: 5px 10px;
-  height: 30px;
-  width: 210px;
-  text-align: center;
+  margin: 15px;
+  margin-left: 225px;
 }
 
 #button a {
@@ -84,35 +87,13 @@
   font-size: 20px;
 }
 
-#delete_container {
-  background: #FF9494;
-  border-radius: 7px;
-  padding: 10px 0px;
-}
-
 #button button {
   border-radius: 7px;
   font-size: 20px;
   color: black;
-  background-color: #8CFD8E;
+  background-color: white;
   border: none;
   cursor: pointer;
-  height: 50px;
-  width: 210px;
-}
-
-#map_container {
-  position: absolute;
-  top: 750px;
-  right: -30px;
-  width: 400px;
-  margin: 0px 0px;
-  margin-bottom: 30px;
-}
-
-#map {
-  border-radius: 7px;
-  border: 1px solid black;
 }
 
 #img_container {
