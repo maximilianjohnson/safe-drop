@@ -91,13 +91,17 @@
         </div>
         <div id="non_desc_container">
           <h2 id="non_desc_title">Drop Details</h2>
-          <p class="non_desc">Cost: ${{i_cost}}</p>
-          <p class="non_desc">Location: {{location}}</p>
-          <p class="non_desc">Date Posted: {{date_init}}</p>
+          <p class="non_desc">$ {{i_cost}}</p>
+          <p class="non_desc">
+            <img id="location_icon" src="https://image.flaticon.com/icons/svg/67/67347.svg" />{{location}}
+          </p>
+          <p class="non_desc">
+            <img id="date_icon" src="https://image.flaticon.com/icons/svg/747/747310.svg" />{{date_init}}
+          </p>
         </div>
 
         <div id="map_container">
-          <div id='map' style='width: 370px; height: 300px;'></div>
+          <div id='map' style='width: 395px; height: 300px'></div>
         </div>
 
         <div id="button">

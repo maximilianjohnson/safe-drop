@@ -1,20 +1,22 @@
 #container {
-  position: relative;
   width: 100vw;
   height: calc(100vh - 75px);
-  overflow-x: hidden;
+  overflow-x: initial;
+  text-align: center;
+  display: inline-block;
 }
 
 #drop_info {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  margin: 30px 60px;
-  width: 600px;
-  height: calc(100% - 60px);
+  vertical-align: top;
+  margin: 30px 20px;
+  display: inline-block;
+  text-align: left;
+  height: 500px;
+  overflow-x: initial;
 }
 
 #post_title {
+  display: inline-block;
   float: left;
   font-size: 45px;
   width: 600px;
@@ -26,9 +28,9 @@
   background: white;
   border-radius: 7px;
   width: 600px;
-  height: 340px;
+  height: calc(100vh - 560px);
   display: inline-block;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 #desc_title {
@@ -41,20 +43,33 @@
   font-family: 'Lato', sans-serif;
   font-size: 18px;
   width: 575px;
-  height: 300px;
+  height: 270px;
   white-space: pre-line;
+  overflow: auto;
 }
 
 #non_desc_container {
+  position: absolute;
+  top: calc(100vh - 380px);
   background: white;
   border-radius: 7px;
-  display: inline-block;
-  width: 180px;
+  width: 155px;
   line-height: 30px;
   padding: 15px;
-  margin: 15px 0px;
-  position: absolute;
-  top: 435px;
+  margin: 15px 0px 0px;
+}
+
+#non_desc_container img {
+  width: 15px;
+  height: auto;
+}
+
+#location_icon {
+  margin-right: 10px;
+}
+
+#date_icon {
+  margin-right: 8px;
 }
 
 #non_desc_title {
@@ -69,12 +84,10 @@
 
 #button {
   position: absolute;
-  top: 655px;
-  left: -10px;
-  display: inline-block;
-  padding: 5px 10px;
+  top: calc(100vh - 205px);
+  margin-top: 15px;
   height: 30px;
-  width: 210px;
+  width: 185px;
   text-align: center;
 }
 
@@ -98,48 +111,47 @@
   border: none;
   cursor: pointer;
   height: 50px;
-  width: 210px;
+  width: 185px;
 }
 
 #map_container {
   position: absolute;
-  top: 750px;
-  right: -30px;
-  width: 400px;
-  margin: 0px 0px;
-  margin-bottom: 30px;
+  top: calc(100vh - 63px);
 }
 
 #map {
   border-radius: 7px;
   border: 1px solid black;
+  margin-left: 203px;
+  display: block;
+  position: relative;
+  bottom: -100px;
 }
 
 #img_container {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  margin: 30px 60px;
-  width: 600px;
-  height: calc(100% - 60px);
+  margin: 0px 20px;
+  display: inline-block;
+  width: calc(100vh - 255px);
   text-align: center;
+  overflow-x: initial;
 }
 
 #big_img {
-  margin-top: 30px;
-  line-height: 500px;
+  vertical-align: top;
+  line-height: calc(100vh - 238px);
 }
 
 #big_img img {
-  max-width: 475px;
-  max-height: 475px;
+  margin: 0px auto;
+  max-width: calc(100vh - 312px);
+  max-height: calc(100vh - 312px);
   width: auto;
   height: auto;
   vertical-align: middle;
 }
 
 #small_img {
-  width: 500px;
+  width: calc(100vh - 375px);
   height: 110px;
   display: inline-block;
   white-space: nowrap;
@@ -178,8 +190,126 @@
 .scroll_button {
   width: 50px;
   height: 50px;
-  margin: 10px;
+  margin: 15px 0px;
   border: none;
   cursor: pointer;
   opacity: 0.9;
+}
+
+@media only screen and (max-height: 800px) {
+  #desc_info {
+    height: 240px;
+  }
+
+  #non_desc_container {
+    position: absolute;
+    top: 420px;
+  }
+
+  #button {
+    position: absolute;
+    top: 595px;
+  }
+
+  #map_container {
+    top: 738px;
+  }
+
+  #img_container {
+    width: 545px;
+  }
+
+  #big_img {
+    line-height: 563px;
+  }
+
+  #big_img img {
+    max-width: 485px;
+    max-height: 485px;
+  }
+
+  #small_img {
+    width: 425px;
+  }
+}
+
+@media only screen and (max-width: 1300px) {
+  #post_title {
+    vertical-align: top;
+  }
+
+  #img_container {
+    position: absolute;
+    top: 145px;
+    left: 50%;
+    margin-left: -273px;
+  }
+
+  #details {
+    position: absolute;
+    top: 860px;
+    left: 50%;
+    margin-left: -300px;
+    margin-bottom: 300px;
+
+  }
+
+  #desc_info {
+    height: 295px;
+  }
+
+  #desc {
+    height: 300px;
+  }
+
+  #non_desc_container {
+    top: 313px;
+  }
+
+  #button {
+    top: 493px;
+  }
+
+  #map_container {
+    top: 630px;
+  }
+}
+
+@media only screen and (max-width: 680px) {
+  #post_title {
+      width: calc(100vw - 40px);
+  }
+
+  #details {
+      margin-left: calc(-1 * (100vw - 40px) / 2);
+  }
+
+  #desc_info {
+    width: calc(100vw - 40px);
+  }
+
+  #non_desc_container {
+    top: 635px;
+    left: 50%;
+    margin-left: -200px;
+  }
+
+  #button {
+    top: 635px;
+    left: 50%;
+    margin-left: 15px;
+  }
+
+  #map_container {
+    left: 50%;
+    margin-left: -400px;
+  }
+
+  #button button {
+    width: 187px;
+  }
+
+  #small_img {
+    width: 390px;
+  }
 }
