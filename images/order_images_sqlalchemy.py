@@ -53,5 +53,5 @@ def newImage (url, TXID, user, url, date):
 #Order number, TXID, Seller username, buyer username, item name,
 #cost, location, date initialized
 def search_allImages(url_id=(None), username=(None)):
-    row = ImagesData.query.filter_by(or_(url_id = url_id, username = username)
+    row = ImagesData.query.filter_by(or_(url_id = url_id, username = username))
     return row

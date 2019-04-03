@@ -35,7 +35,7 @@ db = SQLAlchemy(app)
 
 class UserData(db.Model):
     __tablename__="users"
-    id = db.Column(db,Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
     username = db.Column(db.String(64))
@@ -51,6 +51,8 @@ class UserData(db.Model):
     txA = db.Column(db.Integer)
     user_rating = db.Column(db.Integer)
     status = db.Column(db.String(64))
+
+db.create_all()
 
 def newProfile(first_name, last_name, username, email, age, address, city, \
     province, country, postal_code):
