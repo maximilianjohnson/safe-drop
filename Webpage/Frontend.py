@@ -159,9 +159,10 @@ def profile():
     date_joined = date_joined_ugly.strftime("%B %d, %Y")
     Address = str(search_value('address', current_user.username))
     user_rating = str(search_value('user_rating', current_user.username))
+    id = str(search_value('id', current_user.username))
     status = search_value('status', current_user.username)
     bucks = searchBucks(current_user.username)
-    return render_template("profile.html", FirstName=FirstName, \
+    return render_template("profile.html", FirstName=FirstName, id=id, \
         LastName=LastName, Age=Age, Email=Email, date_joined=date_joined, \
         Address=Address, user_rating=user_rating, status=status, bucks=bucks)
 

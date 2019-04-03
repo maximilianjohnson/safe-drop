@@ -56,13 +56,17 @@
 
     <div class="inside_box">
         <h3 class="profile_text">Welcome, {{current_user.username}}</h3>
-        <p class="profile_text">User rating: {{ user_rating }} Status: {{ status }}</p>
-        <h3 class="profile_text">Email: {{Email}}</h3>
-        <h3 class="profile_text">Age: {{Age}}</h3>
+        <p class="profile_text">Rating: {{ user_rating }}<img id="star_image" src="http://www.clker.com/cliparts/J/h/M/j/T/R/blue-star-md.png"></img></p>
+        <p class="profile_text">Status: {{ status }}</p>
         <h3 class="profile_text">Date joined: {{date_joined}}</h3>
-        <h3 class="profile_text">Address: {{Address}}</h3>
         <h3 class="profile_text">SafeBucks: {{bucks}}</h3>
         <a id=history_button href="{{url_for('history')}}">View your SafeDrop History</a>
+    </div>
+
+    <div class="images_box">
+      <img id="profilepic_image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOUOUQt7cd1PoaYLJdl6B5S1zT9rsqVbXCOR1mfivtdKesVqjRMw"></img>
+      <h3 id = "achievements"><u>User Acheivements</u></h3>
+      <h2 id="welcome">- SafeDrop Alpha user #: <b><i>{{id}}</i></b><br>- Thank you for signing up :)</h2>
     </div>
 
   </div>
