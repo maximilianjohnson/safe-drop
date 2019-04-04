@@ -248,6 +248,10 @@
     margin-left: -335px;
   }
 
+  #big_img img {
+    max-width: calc(100vh - 600px);
+    max-height: calc(100vh - 600px);
+
   #details {
     position: absolute;
     top: 860px;
