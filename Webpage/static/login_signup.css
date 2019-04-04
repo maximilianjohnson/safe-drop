@@ -80,7 +80,7 @@ h2 {
     font-size:16px;
     padding: 5px;
     color: black;
-    background-color: #36DC52;
+    background-color: #33A1CF;
     border: none;
 }
 
@@ -149,18 +149,18 @@ h2 {
     font-size:17px;
     padding: 10px 15px;
     color: #E1E1E1;
-    background-color: #36DC52;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#36DC52), to(#128B15));
-    background-image: -webkit-linear-gradient(top, #36DC52, #128B15);
-    background-image: linear-gradient(to bottom, #36DC52,#128B15);
+    background-color: #33A1CF;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#33A1CF), to(#1677a3));
+    background-image: -webkit-linear-gradient(top, #33A1CF, #1677a3);
+    background-image: linear-gradient(to bottom, #33A1CF, #1677a3);
     border: none;
 }
 
 .signup_button:hover {
-    background-color: #FFAFBD;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#FFAFBD), to(#ffc3a0));
-    background-image: -webkit-linear-gradient(top, #FFAFBD, #ffc3a0);
-    background-image: linear-gradient(to bottom, #FFAFBD, #ffc3a0);
+    background-color: #1677a3;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#1677a3), to(#33A1CF));
+    background-image: -webkit-linear-gradient(top, #1677a3, #33A1CF);
+    background-image: linear-gradient(to bottom, #1677a3, #33A1CF);
 }
 
 @media only screen and (max-width: 1000px) {
