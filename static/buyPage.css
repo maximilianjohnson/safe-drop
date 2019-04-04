@@ -249,8 +249,8 @@
   }
 
   #big_img img {
-    max-width: calc(100vh - 600px);
-    max-height: calc(100vh - 600px);
+    max-width: calc(100vh - 312px);
+    max-height: calc(100vh - 312px);
 
   #details {
     position: absolute;
