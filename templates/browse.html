@@ -3,6 +3,7 @@
 
 <head>
   <title>Browse</title>
+  <link rel="icon" href="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11">
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
   <link rel="stylesheet" type="text/css" href="../static/browse.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -91,7 +92,7 @@
           i = i+1
           data = ('<a href="' + "{{ url_for('buypage', txid = item)}}" +
                 '"class="posts">' + '<div id="img_container">' +
-                '<img src="'+ url +'" alt="petey parkey"></div>' +
+                '<img src="'+ url +'" alt="item_image"></div>' +
                 '<h3 id="post_title">' + i_name +'</h3><h3 id="cost">$' +
                 i_cost +'</h3><h3 id="desc">'+ i_desc +'</h3><h3 id="location">'+
                 place +'</h3><h3 id="date">'+ date_post +'</h3></a><br>');

@@ -3,6 +3,7 @@
 
 <head>
   <title>New Drop</title>
+  <link rel="icon" href="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11">
   <link rel="stylesheet" type="text/css" href="../static/main(new).css">
   <link rel="stylesheet" type="text/css" href="../static/new_drop.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -63,7 +64,6 @@
           </td>
         </tr>
 
-
         <tr>
           <td>
             <p>Description: </p>
@@ -83,7 +83,7 @@
               <option value="SafeDrop UBC">SafeDrop UBC</option>
             </select>
             <div id="map_container">
-              <div id='map' style='width: 400px; height: 300px;'></div>
+              <div id='map'></div>
             </div>
           </td>
         </tr>
@@ -98,12 +98,29 @@
           </td>
         </tr>
       </table>
+
       <div class="button">
 
         <button class="post_button" id="post_button" type="submit" name='post' onclick="confirm()">Post!</button>
 
       </div>
 
+
+            <td>
+              <input type="text" id="main_image" name="main_image" placeholder="">
+            </td>
+            <td>
+              <input type="text" id="main2_image" name="main2_image" placeholder="">
+            </td>
+            <td>
+              <input type="text" id="main3_image" name="main3_image" placeholder="">
+            </td>
+            <td>
+              <input type="text" id="main4_image" name="main4_image" placeholder="">
+            </td>
+            <td>
+              <input type="text" id="main5_image" name="main5_image" placeholder="">
+            </td>
   </form>
   </div>
 
@@ -130,25 +147,29 @@
       }, false);
     </script>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
   <script type="text/javascript">
-    var socket = io.connect();
 
-    var confirm = function() {
-        I_name = document.getElementById("iname").value
-        I_cost = document.getElementById("icost").value
-        I_desc = document.getElementById("idescription").value
-        place = document.getElementById("ilocation").value
-        console.log(image_list)
-        socket.emit( 'confirm_drop', {
-          image_list: image_list,
-          I_name : I_name,
-          I_cost : I_cost,
-          I_desc : I_desc,
-          place : place
-            } )
-      };
+  var confirm = function() {
+    console.log('yeeet')
+    console.log(image_list[1])
+    len = image_list.length
 
+        img1 = image_list[0]
+        document.getElementById("main_image").value = img1
+
+
+        img2 = image_list[1]
+        document.getElementById("main2_image").value = img2
+
+        img3 = image_list[2]
+        document.getElementById("main3_image").value = img3
+
+        img4 = image_list[3]
+        document.getElementById("main4_image").value = img4
+
+        img5 = image_list[4]
+        document.getElementById("main5_image").value = img5
+  }
 
 
   </script>

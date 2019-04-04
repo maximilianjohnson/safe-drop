@@ -49,7 +49,6 @@ db2session = engine_session()
 connection = db2session.connection()
 
 #for the chat portion
-socketio = SocketIO(app)
 
 
 @app.teardown_appcontext
@@ -397,23 +396,6 @@ def transactionpage(chat_id):
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
 
-@socketio.on('my event')
-def handle_my_custom_event(data, methods=['GET', 'POST']):
-    print('received my event: ' + str(data))
-    room = data['room']
-    join_room(room)
-
-    try:
-        msg = data['message']
-        Send_name = data['user_name']
-        txid = data['room']
-        B_name = search_OrderValue('B_username', txid = txid)
-        S_name = search_OrderValue('S_username', txid = txid)
-        newMsg(txid, B_name, S_name, Send_name, msg)
-    except KeyError:
-        pass
-
-    socketio.emit('my response',  data, callback=messageReceived, room=room)
 
 
 @app.route('/<string:chat_id>_box_use/', methods=['GET', 'POST'])
@@ -449,25 +431,24 @@ def boxUse(chat_id):
         return render_template("boxUse.html",code = code_msg, item = item,\
         confirm_msg = confirm_msg, stage=stage)
 
-
-@socketio.on('confirm_drop')
-def handle_confirm_drop(data, methods=['GET', 'POST']):
-    print('got the sauce: ' + str(data))
-    url = data['image_list']
-    print
+'''
+@app.route('/confirm_drop/', methods=['GET', 'POST'])
+def handle_confirm_drop():
+    print('got the sauce')
     user = str(current_user.username)
-    I_name = str(data["I_name"])
-    I_cost = str(data["I_cost"])
-    I_desc = str(data["I_desc"])
-    location = str(data["place"])
+    I_name = request.form["I_name"]
+    I_cost = request.form["I_cost"]
+    print('got the sauce')
+    I_desc = request.form["I_desc"]
+    location = request.form["place"]
+    url = request.form["main_image"]
     S_name = str(current_user.username)
     B_name = 'None'
     txid = newOrder(S_name, B_name, I_name, I_desc, I_cost, location)
     url_id = search_OrderValue('img_url', txid=txid)
-    for item in url:
-        url = str(item)
-        newImage(url_id, txid, user, url)
-
+    newImage(url_id, txid, user, url)
+    return redirect(url_for('active_drops'))
+'''
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
 @login_required
@@ -475,6 +456,34 @@ def new_drop():
     FirstName = str(search_value('first_name', str(current_user.username)))
     LastName = str(search_value('last_name', current_user.username))
     if request.method=='POST':
+        user = str(current_user.username)
+        I_name = request.form["Item_name"]
+        I_cost = request.form["Item_cost"]
+        I_desc = request.form["Item_desc"]
+        location = request.form["location"]
+        url = request.form["main_image"]
+        url2 = request.form["main2_image"]
+        url3 = request.form["main3_image"]
+        url4 = request.form["main4_image"]
+        url5 = request.form["main5_image"]
+        S_name = str(current_user.username)
+        B_name = 'None'
+        txid = newOrder(S_name, B_name, I_name, I_desc, I_cost, location)
+        if url != "undefined":
+            url_id = search_OrderValue('img_url', txid=txid)
+            newImage(url_id, txid, user, url)
+        if url2 != "undefined":
+            url_id = search_OrderValue('img_url', txid=txid)
+            newImage(url_id, txid, user, url2)
+        if url3 != "undefined":
+            url_id = search_OrderValue('img_url', txid=txid)
+            newImage(url_id, txid, user, url3)
+        if url4 != "undefined":
+            url_id = search_OrderValue('img_url', txid=txid)
+            newImage(url_id, txid, user, url4)
+        if url5 != "undefined":
+            url_id = search_OrderValue('img_url', txid=txid)
+            newImage(url_id, txid, user, url5)
         return redirect(url_for('active_drops'))
     return render_template("new_drop.html", FirstName = FirstName,\
     LastName = LastName)
@@ -670,10 +679,6 @@ def browse(page_id):
     LastName = LastName, SellerName=SellerName, \
     ItemName=ItemName, ItemDesc=ItemDesc, ItemCost=ItemCost, \
     Location=Location, date_post=date_post, txid=txid, url=url)
-
-
-if __name__ == '__main__':
-    socketio.run(app, debug=False)
 
 if __name__ == "__main__":
     app.run(debug=False)

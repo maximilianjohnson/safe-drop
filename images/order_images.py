@@ -36,7 +36,7 @@ class ImagesData(db.Model):
     __tablename__="images"
     id = db.Column(db.Integer, primary_key=True)
     url_id = db.Column(db.String(254))
-    TXID = db.Column(db.String(254), unique=True)
+    TXID = db.Column(db.String(254))
     username = db.Column(db.String(64))
     url = db.Column(db.Text())
     date = db.Column(db.String(64))
