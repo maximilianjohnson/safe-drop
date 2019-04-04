@@ -43,8 +43,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-engine = create_engine('postgresql://postgres:postgre123@localhost:5432/\
-SafeDrop_Logins', pool_size = 20, max_overflow=0)
+engine = create_engine('postgres://yktqvccycywrgp:92ced6796cbd9fc37a5eb27614fec29edcb0b404b1611794a4c2ea219870d8cd@ec2-23-21-106-241.compute-1.amazonaws.com:5432/d3iko5eei5ss3a?sslmode=require', pool_size = 20, max_overflow=0)
 engine_session = sessionmaker(engine)
 db2session = engine_session()
 connection = db2session.connection()
