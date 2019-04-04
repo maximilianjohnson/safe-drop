@@ -147,13 +147,13 @@
 
       <div id="buyORdecline">
         {% if code_msg == "Confirm Sale." %}
-        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
-        <a id="confirm" href="{{request_code}}">Confirm Sale</a>
+        <a class="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a class="confirm" href="{{request_code}}">Confirm Sale</a>
         {% elif code_msg == "Confirm Buy."%}
-        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
-        <a id="confirm" href="{{request_code}}">Confirm Buy</a>
+        <a class="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a class="confirm" href="{{request_code}}">Confirm Buy</a>
         {% else %}
-        <a id="confirm" style="width: 455px;" href="{{request_code}}">{{code_msg}}</a>
+        <a id="awaiting" class="confirm" href="{{request_code}}">{{code_msg}}</a>
         {%endif%}
       </div>
 

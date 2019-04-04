@@ -211,10 +211,15 @@
   #buy_drops {
     width: 307.5px;
     display: block;
-    margin: 50px auto;
+    margin: 30px auto;
   }
 
   #sell_drops {
+    width: 307.5px;
+    margin: 30px auto;
+  }
+
+  #active_listing {
     width: 307.5px;
     margin: 30px auto;
   }
