@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Browse</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/browse.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
+    <h1 class="title">SafeDrop</h1>
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <form id="search_container" action="" method="post">
+      <input id="search" type="text" name="Search" placeholder="Search!" required>
+  </form>
+
+
+  <div class="browse_main"></div>
+  {%if searches == "empty"%}
+  <div id="search_results">
+
+      <h3>Your search returned no results! Try a broader search term!</h3>
+      <a href="{{ url_for('browse', page_id=1) }}">Reload the browse page</a>
+  </div>
+  {%elif searches == "values"%}
+  <div id="search_results">
+
+      <a href="{{ url_for('browse', page_id=1) }}">Reload the browse page</a>
+
+  </div>
+  {%endif%}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    var i = 0;
+    var sellerNames = ({{SellerName|tojson}});
+    var itemNames = ({{ItemName|tojson}});
+    var itemDescs = ({{ItemDesc|tojson}});
+    var itemCosts = ({{ItemCost|tojson}});
+    var locations = ({{Location|tojson}});
+    var date_posts = ({{date_post|tojson}})
+    var urls = ({{url|tojson}})
+
+          {% for item in txid %}
+          i_name = itemNames[i]
+          i_desc = itemDescs[i]
+          i_cost = itemCosts[i]
+          place = locations[i]
+          date_post = date_posts[i]
+          url = urls[i]
+
+          i = i+1
+          data = ('<a href="' + "{{ url_for('buypage', txid = item)}}" +
+                '"class="posts">' + '<div id="img_container">' +
+                '<img src="'+ url +'" alt="petey parkey"></div>' +
+                '<h3 id="post_title">' + i_name +'</h3><h3 id="cost">$' +
+                i_cost +'</h3><h3 id="desc">'+ i_desc +'</h3><h3 id="location">'+
+                place +'</h3><h3 id="date">'+ date_post +'</h3></a><br>');
+          console.log(data)
+          $("div.browse_main").append(data);
+          {% endfor %}
+
+    </script>
+
+  <div id="page_container">
+    <a href="{{url_for('browse', page_id=1)}}" class="page" id="page_1">1</a>
+    <a href="{{url_for('browse', page_id=2)}}" class="page">2</a>
+    <a href="{{url_for('browse', page_id=3)}}" class="page">3</a>
+    <a href="{{url_for('browse', page_id=4)}}" class="page">4</a>
+    <a href="{{url_for('browse', page_id=5)}}" class="page">5</a>
+  </div>
+
+</body>
+
+</html>

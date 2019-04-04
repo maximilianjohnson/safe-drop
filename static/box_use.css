@@ -1,0 +1,86 @@
+#container {
+  text-align: center;
+}
+
+#confirmation {
+  font-weight: 500;
+  font-size: 40px;
+  margin: 30px;
+  letter-spacing: 1px;
+}
+
+#code {
+  font-weight: 300;
+  font-size: 20px;
+  position: absolute;
+  top: 300px;
+  left: 0px;
+  right: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#info {
+  color: dimgrey;
+  font-size: 17px;
+  position: absolute;
+  top: 330px;
+  left: 0px;
+  right: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#return_disclaimer {
+    color: dimgrey;
+    font-size: 12px;
+    position: absolute;
+    bottom: 65px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#request {
+  border-radius: 7px;
+  font-size: 20px;
+  padding: 10px 0px;
+  width: 400px;
+  display: inline-block;
+  color: black;
+  background-color: #36DC52;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 15px;
+  left: 0px;
+  right: 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+#return_button {
+    border-radius: 7px;
+    font-size:20px;
+    padding: 10px 0px;
+    width: 400px;
+    display: inline-block;
+    color: black;
+    background-color: #FF4500;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: 15px;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media only screen and (max-width: 750px) {
+  #request {
+    width: 80vw;
+  }
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>SafeDrop Profile</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/profile.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <label class="toggle" for="toggle">&#9776;</label>
+    <img id="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
+    <h1 class="title">SafeDrop</h1>
+    <input type="checkbox" id="toggle" />
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle" />
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- This is the body of the webpage-->
+  <div class="box">
+
+    <h2 class="profile_header">{{FirstName}} {{LastName}}</h2>
+
+    <div class="inside_box">
+        <h3 class="profile_text">Welcome, {{current_user.username}}</h3>
+        <p class="profile_text">Rating: {{ user_rating }}<img id="star_image" src="http://www.clker.com/cliparts/J/h/M/j/T/R/blue-star-md.png"></img></p>
+        <p class="profile_text">Status: {{ status }}</p>
+        <h3 class="profile_text">Date joined: {{date_joined}}</h3>
+        <h3 class="profile_text">SafeBucks: {{bucks}}</h3>
+        <a id=history_button href="{{url_for('history')}}">View your SafeDrop History</a>
+    </div>
+
+    <div class="images_box">
+      <img id="profilepic_image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOUOUQt7cd1PoaYLJdl6B5S1zT9rsqVbXCOR1mfivtdKesVqjRMw"></img>
+      <h3 id = "achievements"><u>User Acheivements</u></h3>
+      <h2 id="welcome">- SafeDrop Alpha user #: <b><i>{{id}}</i></b><br>- Thank you for signing up :)</h2>
+    </div>
+
+  </div>

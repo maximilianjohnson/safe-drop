@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="../static/login_signup.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+
+<div class="nav">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <h1 class="title">SafeDrop</h1>
+      <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
+
+
+    <div class="login_form">
+        <form action="{{url_for('login')}}" method="post">
+            <div id="input_container">
+                <div class="stoopid">
+                    <label class="label_text" for="Username">Username:</label>
+                    <input type="text" placeholder="Username" name="userentry" value="{{request.form.username }}" required/>
+                </div>
+
+                <div class="stoopid" id="password">
+                    <label class="label_text" for="Password">Password:</label>
+                    <input type="password" placeholder="Password" name="passentry" value="" required/>
+                </div>
+
+            </div>
+            <button class="login_button" name="login_value" type="submit" value="login">Login</button>
+        </form>
+    </div>
+
+</div>
+
+<div class="box">
+    <div class="container">
+      {%if error == None%}
+      <h2 class="box_header">New user? Sign up for a SafeDrop profile below.</h2>
+      {%else%}
+      <h2 class="box_header">{{error}}<br>Sign up for a SafeDrop profile below.</h2>
+      {%endif%}
+    <form action="{{ url_for('signup') }}" method="post">
+        <label class=signup_label>Username: </label>
+        <input type="text" placeholder="Username" name="username" value="" min = "4" max = "30" required>
+        <br>
+        <label class=signup_label>Password: </label>
+        <input type="text" placeholder="Password" name="password" value="" min = "8" max = "32" required>
+        <br>
+        <label class=signup_label>First Name: </label>
+        <input type="text" placeholder="First Name" name="first_name" value="" max = "30" required>
+        <br>
+        <label class=signup_label>Last Name: </label>
+        <input type="text" placeholder="Last Name" name="last_name" value="" max = "32" required>
+        <br>
+        <label class=signup_label>Location: </label>
+        <select type="list" name="city" placeholder="Select your location:" required>
+          <option value="Vancouver">Vancouver, BC</option>
+        </select>
+        <button class="signup_button" type="submit" name="signup_button" value="signup">Signup</button>
+    </form>
+
+
+  </div>
+
+</div>
+
+</body>
+</html>

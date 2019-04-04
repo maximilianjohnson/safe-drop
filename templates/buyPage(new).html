@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Buy Page</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/buyPage.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset='utf-8' />
+
+</head>
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <h1 class="title">SafeDrop</h1>
+    <img id="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle" />
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle" />
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div id="container">
+    <div id="img_container">
+      <div id="big_img">
+        <img src="{{url[0]}}" id="expandedImg">
+      </div>
+      <div id="scroll_plus_small">
+        <div class="left">
+          <button class="scroll_button" id="left-button" style="background: url(https://image.flaticon.com/icons/svg/8/8747.svg)">
+          </button>
+        </div>
+        <div id="small_img"></div>
+        <div class="right">
+          <button class="scroll_button" id="right-button" style="background: url(https://image.flaticon.com/icons/svg/10/10022.svg)">
+          </button>
+        </div>
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script type="text/javascript">
+      var i = 0;
+      var urls = ({{url|tojson}})
+
+        {% for item in url %}
+        item = urls[i]
+        i = i+1
+        data = ('<img src="'+ item +'" alt="item_img" onclick="myFunction(this)">');
+        console.log(data)
+        $("div#small_img").append(data);
+        {% endfor %}
+      </script>
+    </div>
+
+
+
+    <div id="drop_info">
+      <h1 id="post_title">{{i_name}}</h1>
+      <div id="details">
+        <div id="desc_info">
+          <h2 id="desc_title">Description</h2>
+          <pre id="desc">{{i_desc}}</pre>
+        </div>
+        <div id="non_desc_container">
+          <h2 id="non_desc_title">Drop Details</h2>
+          <p class="non_desc">$ {{i_cost}}</p>
+          <p class="non_desc">
+            <img id="location_icon" src="https://image.flaticon.com/icons/svg/67/67347.svg" />{{location}}
+          </p>
+          <p class="non_desc">
+            <img id="date_icon" src="https://image.flaticon.com/icons/svg/747/747310.svg" />{{date_init}}
+          </p>
+        </div>
+
+        <div id="map_container">
+          <div id='map' style='width: 395px; height: 300px'></div>
+        </div>
+
+        <div id="button">
+          {% if currentuser != SellerName %}
+          <form action="" method="POST">
+            <button type="submit" name="submit" value="submit">Buy This Drop</button>
+          </form>
+          {% else %}
+          <div id="delete_container">
+            <a href="{{url_for('deleteTX', chat_id=txid)}}" id="delete">Delete This Drop</a>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script  src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript">
+      function myFunction(imgs) {
+        var expandImg = document.getElementById("expandedImg");
+        var imgText = document.getElementById("imgtext");
+        expandImg.src = imgs.src;
+        imgText.innerHTML = imgs.alt;
+        expandImg.parentElement.style.display = "block";
+      }
+  </script>
+
+
+  <script type="text/javascript">
+     $('#right-button').click(function() {
+        event.preventDefault();
+        $('#small_img').animate({
+          scrollLeft: "+=200px"
+        }, "slow");
+     });
+
+       $('#left-button').click(function() {
+        event.preventDefault();
+        $('#small_img').animate({
+          scrollLeft: "-=200px"
+        }, "slow");
+     });
+  </script>
+
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    #map { position:absolute; bottom: 0px; left: 0px; width:100%; }
+  </style>
+  <style>
+    .mapboxgl-popup {
+      max-width: 170px;
+      font: 12px/15px 'Arial', Helvetica, sans-serif;
+    }
+  </style>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FmZWRyb3AiLCJhIjoiY2p0eGowaTN5MjI3ZDN5cXV1NTQzNHI1aiJ9.ngYUAqtTR4ErRpUCh9XQqg';
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-123.244826, 49.262235],
+    zoom: 14.15
+    });
+    map.on('load', function () {
+    // Add a layer showing the places.
+    map.addLayer({
+    "id": "places",
+    "type": "symbol",
+    "source": {
+    "type": "geojson",
+    "data": {
+    "type": "FeatureCollection",
+    "features": [{
+    "type": "Feature",
+    "properties": {
+    "title": "SafeDrop UBC",
+    "description": "<p>Design and Innovation Day</p>",
+    "icon": "bank"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-123.245496, 49.262435]
+      }
+      }]
+    }
+    },
+    "layout": {
+      "icon-image": "{icon}-15",
+      "icon-size": 1.7,
+      "icon-allow-overlap": true,
+      "text-field": "{title}",
+      "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+      "text-offset": [0, 0.6],
+      "text-anchor": "top",
+    },
+    "paint": {
+    "icon-color" : "#FFFF00"
+    },
+    });
+
+    // When a click event occurs on a feature in the places layer, open a popup at the
+    // location of the feature, with description HTML from its properties.
+    map.on('click', 'places', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var description = e.features[0].properties.description;
+
+    // Ensure that if the map is zoomed out such that multiple
+    // copies of the feature are visible, the popup appears
+    // over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(description)
+    .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'places', function () {
+    map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'places', function () {
+    map.getCanvas().style.cursor = '';
+    });
+    });
+
+
+  </script>
+
+</html>

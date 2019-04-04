@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Message</title>
+  <link rel="stylesheet" type="text/css" href="../static/main(new).css">
+  <link rel="stylesheet" type="text/css" href="../static/message.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+  <!--This is the navigation of the webpage. This should remain the same throughout all pages-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <div class="nav">
+    <h1 class="title">SafeDrop</h1>
+    <img id ="title_image" src="https://scontent-sea1-1.xx.fbcdn.net/v/t1.15752-9/54518170_1248458095314491_6567331254184706048_n.png?_nc_cat=109&_nc_ht=scontent-sea1-1.xx&oh=948ef5830be5a983bb58771be3acba5c&oe=5D0C4C11" alt="SafeDrop Logo">
+    <label class="toggle" for="toggle">&#9776;</label>
+    <input type="checkbox" id="toggle"/>
+    <div class="user">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="menu">
+      <a href="{{ url_for('browse', page_id=1) }}">Browse</a>
+      <a href="{{ url_for('active_drops') }}">Active Drops</a>
+      <a id="newdrop" href="{{ url_for('new_drop') }}">New Drop</a>
+      <p class="menu_title">{{FirstName}} {{LastName}}</p>
+    </div>
+    <label class="mobile_toggle" for="mobile_toggle">&#9776;</label>
+    <input type="checkbox" id="mobile_toggle"/>
+    <div class="mobile">
+      <ul>
+        <li>
+          <a class="dropdown" href="{{ url_for('new_drop') }}">New Drop</a>
+          <a class="dropdown" href="{{ url_for('active_drops') }}">Active Drops</a>
+          <a class="dropdown" href="{{ url_for('browse', page_id=1) }}">Browse</a>
+          <a class="dropdown" href="{{ url_for('profile') }}">Profile</a>
+          <a class="dropdown" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+
+  <div class="container">
+
+    <div class="messages_container">
+      <h2 id="connected_to">
+        {% if current_user.username == sell_user%}
+        <i>You are selling "{{item_name}}" to {{buy_user}}</i><br>
+        <b>Say hello!</b>
+        {% elif current_user.username == buy_user%}
+        <i>You are buying "{{item_name}}" from {{buy_user}}</i><br>
+        <b>Say hello!</b>
+        {%endif%}
+      </h2>
+
+      <div id="message_sent_container">
+        <div class = "old_messages"></div>
+        <div class="message_holder"></div>
+      </div>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script type="text/javascript">
+      var msgtime = ({{oldMsgTime|tojson}})
+      var msgs = ({{oldMsgMsg|tojson}})
+      var sender = ({{oldMsgSender|tojson}})
+      for (i = 0; i < msgtime.length; i++) {
+      send = sender[i]
+      time = msgtime[i]
+      msg = msgs[i]
+      if (msg == null){
+        msg = 'Transaction created. Hello!'
+      }
+      out = ('<div><b>' + send + '</b>' + ': ' + msg + '  -  -  -  <i>'+ time + '</i> <br>');
+      console.log(out)
+      $("div.old_messages").append(out);
+      }
+      </script>
+
+
+      <form action="" method="POST">
+        <input type="text" class="message" placeholder="Messages"/>
+        <button id="send" type="submit" name="post">Send</button>
+      </form>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/javascript">
+      var user_name = "{{currentuser}}"
+      var socket = io.connect();
+
+      socket.emit('join', {
+        username : '{{currentuser}}',
+        room : '{{chatid}}'
+      })
+
+      socket.on( 'connect', function(socketio) {
+        socket.emit( 'my event', {
+          data: 'User Connected',
+          room : '{{chatid}}'
+        } )
+        var form = $( 'form' ).on( 'submit', function( e ) {
+          e.preventDefault()
+          let user_input = $( 'input.message' ).val()
+          socket.emit( 'my event', {
+            user_name : user_name,
+            message : user_input,
+            room : '{{chatid}}'
+          } )
+          $( 'input.message' ).val( '' ).focus()
+        } )
+      } )
+
+      socket.on( 'my response', function( msg ) {
+        console.log( msg )
+        if( typeof msg.user_name !== 'undefined' ) {
+          $( 'h3' ).remove()
+          $( 'div.message_holder' ).append( '<div><b>'+msg.user_name+'</b> '+msg.message+'</div>' )
+        }
+      })
+    </script>
+
+    <label class="toggle2" for="toggle2">Details</label>
+    <input type="checkbox" id="toggle2"/>
+    <div class="toggle_target">
+      <div class="drop_info">
+
+        <h2 id="title">{{item_name}}</h2>
+
+        <pre id="description">{{item_desc}}</pre>
+
+        <div id="details">
+          <h2>Cost: ${{item_cost}}</h2>
+          <h2>Location: {{location}}</h2>
+          <h2>Date Posted: {{date_init}}</h2>
+        </div>
+      </div>
+
+      <div id="buyORdecline">
+        {% if code_msg == "Confirm Sale." %}
+        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a id="confirm" href="{{request_code}}">Confirm Sale</a>
+        {% elif code_msg == "Confirm Buy."%}
+        <a id="decline" href="{{url_for('declineTX', chat_id=chatid)}}">Decline Drop</a>
+        <a id="confirm" href="{{request_code}}">Confirm Buy</a>
+        {% else %}
+        <a id="confirm" style="width: 455px;" href="{{request_code}}">{{code_msg}}</a>
+        {%endif%}
+      </div>
+
+      <div>
+        <label class="exit" for="toggle2">
+          <img class="exit" src="https://www.fsbnh.bank/wp-content/uploads/2017/05/close-icon.png" />
+        </label>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
