@@ -69,16 +69,17 @@
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script type="text/javascript">
-      var msgdata = ({{ oldMsg|tojson }});
       var msgtime = ({{oldMsgTime|tojson}})
-      for (i = 0; i < msgdata.length; i++) {
-      dataset = msgdata[i]
+      var msgs = ({{oldMsgMsg|tojson}})
+      var sender = ({{oldMsgSender|tojson}})
+      for (i = 0; i < msgtime.length; i++) {
+      send = sender[i]
       time = msgtime[i]
-      msg = dataset[5]
+      msg = msgs[i]
       if (msg == null){
         msg = 'Transaction created. Hello!'
       }
-      out = ('<div><b>' + dataset[4] + '</b>' + ': ' + msg + '  -  -  -  <i>'+ time + '</i> <br>');
+      out = ('<div><b>' + send + '</b>' + ': ' + msg + '  -  -  -  <i>'+ time + '</i> <br>');
       console.log(out)
       $("div.old_messages").append(out);
       }

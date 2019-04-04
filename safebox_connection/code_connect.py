@@ -5,11 +5,10 @@ buyer username, txid, seller username, who should be accessing the box,
 which box, access codes, expiry times, attempt time, attempt status
 
 """
-#Author: Maximilian Johnson
-#Date: March 14th 2019
+#Author: Andrew Moreno
+#Date: April 3rd, 2019
 
 #Imports
-
 import sys
 sys.path.append('../')
 
@@ -18,156 +17,173 @@ from safebucks.currency import completeMoneyTransfer
 import psycopg2
 import datetime
 from random import randint
+import json
+from flask import Flask, render_template, redirect, url_for, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, update, or_
+from sqlalchemy.orm import sessionmaker
+
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
+localhost:5432/SafeDrop_KeypadCode'
+app.config['SECRET_KEY'] = 'thisissecret'
+
+db = SQLAlchemy(app)
 
 #connects to database
 #Info stored: Transaction number in ascending order, random generated order ID,
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
-def connect_codelog():
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS codelog (id SERIAL, TXID TEXT, \
-                 B_username TEXT, S_username TEXT, stage TEXT,\
-                 box_id TEXT, access_code TEXT, expiry_time TEXT, code_attempt\
-                 TEXT, attempt_time TEXT, seller_close_date TEXT,\
-                 buyer_close_date TEXT,door_status TEXT, \
-                 scale_status TEXT, scale_delta TEXT, in_box_image_url TEXT)")
-    conn.commit()
-    conn.close()
 
-#connects to database
-#connect_codelog()
+class ConnectData(db.Model):
+    __tablename__="codelog"
+    id = db.Column(db.Integer, primary_key = True)
+    TXID = db.Column(db.String(254))
+    B_username = db.Column(db.String(64))
+    S_username = db.Column(db.String(64))
+    stage = db.Column(db.String(128))
+    box_id = db.Column(db.String(128))
+    access_code = db.Column(db.String(64))
+    expiry_time = db.Column(db.String(128))
+    code_attempt = db.Column(db.String(64))
+    attempt_time = db.Column(db.String(128))
+    seller_close_date = db.Column(db.String(128))
+    buyer_close_date = db.Column(db.String(128))
+    door_status = db.Column(db.String(64))
+    scale_status = db.Column(db.String(64))
+    scale_delta = db.Column(db.String(64))
+    in_box_image_url = db.Column(db.String(254))
 
-#Function uses values to add new order to psycopg2 database
+
 def newBoxAssignment(txid, box_id):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     B_username = search_OrderValue('B_username', txid = txid)
     S_username = search_OrderValue('S_username', txid = txid)
     stage = 'Seller Access'
     date = None
     code = None
     status = None
-    cur.execute("INSERT INTO codelog VALUES(default, %s, %s, %s, %s, %s, %s, %s,\
-    %s, %s, %s, %s, %s, %s, %s)", \
-    (txid, B_username, S_username, stage, box_id, code, date, code, date, date,\
-    date, status, status, status))
-    conn.commit()
-    conn.close()
+    new_entry = ConnectData(TXID = txid, B_username = B_username, \
+        S_username = S_username, stage = stage, box_id = box_id, \
+        access_code = code, expiry_time = date, code_attempt = code, attempt_time = date, seller_close_date = date, \
+        buyer_close_date = date, door_status = status, scale_status = status, scale_delta = status)
+    db.session.add(new_entry)
+    db.session.commit()
+    db.session.close()
 
 def codeGen(TXID):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     code = randint(100000, 999999)
-    expiry = (datetime.datetime.now()) + datetime.timedelta(minutes = 1)
-    cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s \
-                WHERE TXID=%s", (code, expiry, TXID))
-    conn.commit()
-    conn.close()
+    expiry = datetime.datetime.now() + datetime.timedelta(minutes = 1)
+    row = ConnectData.query.filter_by(TXID = TXID).first()
+    row.access_code = code
+    row.expiry_time = expiry
+    db.session.commit()
+    db.session.close()
     return code
 
 def search_ChatValue(column, txid):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
-    SQL = "SELECT " + column + " FROM codelog WHERE TXID=(%s)"
-    data = (txid,)
-    cur.execute(SQL, data)
-    value = cur.fetchall()
-    for item in value:
-        return ("%s" % item)
+    row = ConnectData.query.filter_by(TXID = txid).first()
+    search = getattr(row, column)
+    db.session.close()
+    return search
 
 def attemptCode(code, txid):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     date = datetime.datetime.now()
-    cur.execute("UPDATE codelog SET attempt_time=%s, code_attempt=%s \
-                WHERE TXID=%s", (date, code, txid))
-    conn.commit()
-    conn.close()
+    row = ConnectData.query.filter_by(TXID = txid).first()
+    row.attempt_time = date
+    row.code_attempt = code
+    db.session.commit()
+    db.session.close()
 
 def writeToScaleDoor(txid, door_status = None, scale_status = None, stage = None):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     if door_status != None:
-        cur.execute("UPDATE codelog SET door_status=%s WHERE TXID=%s", (door_status, txid))
+        row = ConnectData.query.filter_by(TXID = txid).first()
+        row.door_status = door_status
     if scale_status != None:
-        cur.execute("UPDATE codelog SET scale_status=%s WHERE TXID=%s", (scale_status, txid))
+        row = ConnectData.query.filter_by(TXID = txid).first()
+        row.scale_status = scale_status
     if stage != None:
-        cur.execute("UPDATE codelog SET stage=%s WHERE TXID=%s", (stage, txid))
-    conn.commit()
-    conn.close()
-
+        row = ConnectData.query.filter_by(TXID = txid).first()
+        row.stage = stage
+    db.session.commit()
+    db.session.close()
 
 #result = def boxResult()
 def accessSet(result, txid):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     stage = search_ChatValue('stage', txid)
     if stage == 'Seller Access':
         if result == 'Success':
             date = datetime.datetime.now()
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        seller_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, date, 'Buyer Access', txid))
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.seller_close_date = date
+            row.stage = 'Buyer Access'
+
         else:
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        seller_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, None, 'Seller Access', txid))
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.seller_close_date = None
+            row.stage = 'Seller Access'
 
     elif stage == 'Buyer Access':
         if result == 'Success':
-            date = datetime.datetime.now()
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        buyer_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, date, 'Complete', txid))
+            date == datetime.datetime.now()
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.buyer_close_date = date
+            row.stage = 'Complete'
 
         elif result == 'Return':
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        buyer_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, date, 'Return', txid))
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.buyer_close_date = date
+            row.stage = 'Return'
 
         elif result == 'False Return':
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        buyer_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, date, 'False Return', txid))
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.buyer_close_date = date
+            row.stage = 'False Return'
+
         else:
-            cur.execute("UPDATE codelog SET access_code=%s, expiry_time=%s, \
-                        buyer_close_date=%s, stage=%s WHERE TXID=%s",\
-                       (None, None, None, 'Buyer Access', txid))
+            row = ConnectData.query.filter_by(TXID = txid)
+            row.access_code = None
+            row.expiry_time = None
+            row.buyer_close_date = None
+            row.stage = 'Buyer Access'
+
+    db.session.commit()
+    db.session.close()
 
 #can be adjusted to send unlock signal
 def codeResult(txid):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     time = datetime.datetime.now()
     expiry = search_ChatValue('expiry_time', txid)
     datetime_expiry = datetime.datetime.strptime(expiry, "%Y-%m-%d %H:%M:%S.%f")
     input_code = search_ChatValue('code_attempt', txid)
     if datetime_expiry < time:
+        db.session.close()
         return "Error. The timer has expired, please request another code."
     else:
         box_code = search_ChatValue('access_code', txid)
         if input_code == box_code:
+            db.session.close()
             return "Success! You may now access your SafeDrop."
         else:
+            db.session.close()
             return "Error, you have entered an incorrect code."
-
 
 #code_result = def codeResult()
 #door_status = def doorStatus() linked to aurduino code, must be completed with box team
 #scale_reads = def scaleReads() linked to aurduino code, must be completed with box team
 #return = webpage button
 def boxResult(txid, return_status = None):
-    connect_codelog()
-    conn=psycopg2.connect("dbname='SafeDrop_KeypadCode' user='postgres' password='postgre123' host='localhost' port = '5432'")
-    cur=conn.cursor()
     scale_reads = search_ChatValue('scale_status', txid)
     door_status = search_ChatValue('door_status', txid)
     if stage == 'Buyer Access' and return_status != None:
@@ -196,7 +212,6 @@ def boxResult(txid, return_status = None):
         else:
             return 'Error'
 
-
 def endofTXProtocol(txid, returnStatus):
     txResult = boxResult(txid, returnStatus)
     writeToScaleDoor(txid, stage = txResult)
@@ -209,9 +224,7 @@ def endofTXProtocol(txid, returnStatus):
         completeMoneyTransfer(txid)
         statusUpdate("FALSE RETURN")
 
-
 def dropStatus(txid, user, msg = None, status = None):
-    connect_codelog()
     drop_status = search_OrderValue('status', txid = txid)
     b_user = search_OrderValue('B_username', txid = txid)
     s_user = search_OrderValue('S_username', txid = txid)
@@ -268,11 +281,9 @@ def dropStatus(txid, user, msg = None, status = None):
         return tx_status
 
 def requestCode(txid, user):
-    connect_codelog()
     stage = str(search_ChatValue('stage', txid))
     b_user = search_ChatValue('B_username', txid)
     s_user = search_ChatValue('S_username', txid)
-
     if stage == 'Buyer Access' and b_user == user:
         code = codeGen(txid)
         return code
