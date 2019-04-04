@@ -61,6 +61,7 @@ class DataOrders(db.Model):
     status = db.Column(db.String(128))
     img_url = db.Column(db.String(24))
     date_resolved = db.Column(db.String(128))
+db.create_all()
 
 #connects to database
 #connect_OrderInfo_db()

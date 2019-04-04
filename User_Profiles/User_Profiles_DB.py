@@ -51,6 +51,7 @@ class UserData(db.Model):
     txA = db.Column(db.Integer)
     user_rating = db.Column(db.Integer)
     status = db.Column(db.String(64))
+db.create_all()
 
 
 def insert_newprofile_up_db(first_name, last_name, username, email, age, address, city, \

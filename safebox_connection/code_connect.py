@@ -55,6 +55,7 @@ class ConnectData(db.Model):
     scale_status = db.Column(db.String(64))
     scale_delta = db.Column(db.String(64))
     in_box_image_url = db.Column(db.String(254))
+db.create_all()
 
 
 def newBoxAssignment(txid, box_id):

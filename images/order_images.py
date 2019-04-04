@@ -41,6 +41,7 @@ class ImagesData(db.Model):
     username = db.Column(db.String(64))
     url = db.Column(db.Text())
     date = db.Column(db.String(64))
+db.create_all()
 
 
 def newImage (url_id, TXID, user, url):

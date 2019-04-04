@@ -37,6 +37,7 @@ class ChatData(db.Model):
     Sender_username = db.Column(db.String(64))
     msg = db.Column(db.String(254))
     msg_date = db.Column(db.String(64))
+db.create_all()
 
 
 def newMsg (txid, B_username, S_username, Sender_username, msg):

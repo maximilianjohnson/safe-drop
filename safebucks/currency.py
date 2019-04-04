@@ -38,23 +38,27 @@ class SafeBucksData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64))
     bucks = db.Column(db.Float)
+db.create_all()
 
 
 def addUserBucks(username):
     bucks = 100.00
-    SafeBucksData(username = username, bucks = bucks)
-    db.session.add(addUserBucks)
+    add = SafeBucksData(username = username, bucks = bucks)
+    db.session.add(add)
     db.session.commit()
+    db.session.close()
 
 def searchBucks(username):
     row = SafeBucksData.query.filter_by(username = username).first()
     search = row.bucks
+    db.session.close()
     return search
 
 def updateBucks(username, bucks):
     row = SafeBucksData(username = username).first()
     row.bucks = bucks
     db.session.commit()
+    db.session.close()
 
 def add100Bucks(username):
     row = SafeBucksData.query.filter_by(username = username).first()
@@ -62,6 +66,7 @@ def add100Bucks(username):
     bucks = bucks_i + 100
     row.bucks = bucks
     db.session.commit()
+    db.session.close()
 
 def completeMoneyTransfer(txid):
     cost = search_OrderValue('cost', txid)

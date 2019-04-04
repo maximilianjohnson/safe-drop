@@ -152,7 +152,7 @@ class ChatData(db.Model):
     msg = db.Column(db.String(254))
     msg_date = db.Column(db.String(64))
 
-#db.create_all()
+db.create_all()
 
 
 #changes displayed initialized date based on how long ago they were posted
@@ -205,6 +205,8 @@ def signup():
             insert_newprofile_up_db(first_name, last_name, username, email, age, \
             address, city, province, country, postal_code)
 
+            addUserBucks(username)
+
             user = UserLogins.query.filter_by(username=username).first()
             if user is None or not user.check_password(password):
                 message='Invalid Credentials. Please try again.'
@@ -242,7 +244,7 @@ def profile():
     LastName = str(search_value('last_name', current_user.username))
     Age = str(search_value('age', current_user.username))
     Email = str(search_value('email', current_user.username))
-    date_joined_ugly = datetime.strptime(search_value('date_joined', current_user.username), '%Y-%m-%d')
+    date_joined_ugly = datetime.strptime(search_value('date_joined', current_user.username), '%Y-%m-%d %H:%M:%S.%f')
     date_joined = date_joined_ugly.strftime("%B %d, %Y")
     Address = str(search_value('address', current_user.username))
     user_rating = str(search_value('user_rating', current_user.username))
@@ -484,11 +486,15 @@ def new_drop():
 @login_required
 def add100():
     user = current_user.username
-    if searchBucks(user) == None:
+    try:
+        if searchBucks(user) == None:
+            addUserBucks(user)
+        else:
+            add100Bucks(user)
+        return redirect(url_for('profile'))
+    except AttributeError:
         addUserBucks(user)
-    else:
-        add100Bucks(user)
-    return redirect(url_for('profile'))
+        return redirect(url_for('profile'))
 
 @app.route('/buy_<string:txid>', methods=['GET', 'POST'])
 @login_required
