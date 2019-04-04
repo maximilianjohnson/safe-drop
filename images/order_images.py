@@ -22,7 +22,7 @@ from sqlalchemy.orm import sessionmaker
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://yktqvccycywrgp:92ced6796cbd9fc37a5eb27614fec29edcb0b404b1611794a4c2ea219870d8cd@ec2-23-21-106-241.compute-1.amazonaws.com:5432/d3iko5eei5ss3a?sslmode=require'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://cbcsdsjpafwndn:485e906069a706743a7a7fe993889fe15c3145b66927d0c13ef6d08f327d1114@ec2-50-17-227-28.compute-1.amazonaws.com:5432/d3n6f8iutcli6p?sslmode=require'
 app.config['SECRET_KEY'] = 'thisissecret'
 
 db = SQLAlchemy(app)
