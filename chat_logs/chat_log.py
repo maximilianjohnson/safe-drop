@@ -1,48 +1,53 @@
 """
-A program that creates and connects to an SQL database for SafeDrop chat logs
+A program that creates and connects to an SQlAlchemy database for SafeDrop chat logs
 and can add new entries with this info:
 buyer username, seller username, txid, all chat messages and sent dates
 
 """
-#Author: Maximilian Johnson
-#Date: March 14th 2019
+#Author: Andrew Moreno
+#Date: April 2nd 2019
 
 #Imports
+import sys
+sys.path.append('../')
+
 import psycopg2
 from datetime import datetime
+import json
+from flask import Flask, render_template, redirect, url_for, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, update
+from sqlalchemy.orm import sessionmaker
 
-#connects to database
-#Info stored: Transaction number in ascending order, random generated order ID,
-#Buyer username, seller username, item name, date initialized, cost, location,
-#order status, date in which data was last modified, date transaction resolves
-def connect_chatlog():
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS chatlog (id SERIAL, TXID TEXT, \
-                 B_username TEXT, S_username TEXT, Sender_username TEXT,\
-                 msg TEXT, msg_date TEXT)")
-    conn.commit()
-    conn.close()
+app = Flask(__name__)
 
-#connects to database
-#connect_chatlog()
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
+localhost:5432/SafeDrop_ChatLog'
+app.config['SECRET_KEY'] = 'thisissecret'
 
-#Function uses values to add new order to psycopg2 database
-def newMsg(txid, B_username, S_username, Send_username, msg):
-    connect_chatlog()
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
+db = SQLAlchemy(app)
+
+class ChatData(db.Model):
+    __tablename__="chatlog"
+    id = db.Column(db.Integer, primary_key=True)
+    TXID = db.Column(db.String(254))
+    B_username = db.Column(db.String(64))
+    S_username = db.Column(db.String(64))
+    Sender_username = db.Column(db.String(64))
+    msg = db.Column(db.String(254))
+    msg_date = db.Column(db.String(64))
+
+
+def newMsg (txid, B_username, S_username, Sender_username, msg):
     msg_date = str(datetime.now())
-    cur.execute("INSERT INTO chatlog VALUES(default, %s, %s, %s, %s, %s, %s)", \
-    (txid, B_username, S_username, Send_username, msg, msg_date))
-    conn.commit()
-    conn.close()
+    new_entry = ChatData(TXID = txid, B_username = B_username, S_username = S_username, \
+        Sender_username = Sender_username, msg = msg, msg_date = msg_date)
+    db.session.add(new_entry)
+    db.session.commit()
+    db.session.close()
 
-def searchMsg(TXID):
-    connect_chatlog()
-    conn=psycopg2.connect("dbname='SafeDrop_ChatLog' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
-    cur.execute("SELECT * FROM chatlog WHERE TXID=%s", (TXID,))
-    rows = cur.fetchall()
-    conn.close()
-    return rows
+def searchMsg (txid):
+    row = ChatData.query.filter_by(TXID=txid)
+    db.session.close()
+    return row

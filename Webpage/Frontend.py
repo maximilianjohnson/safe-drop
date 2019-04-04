@@ -21,7 +21,7 @@ from flask import Flask, render_template, redirect, url_for, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required,\
 logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, exc
 from sqlalchemy.orm import sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from User_Profiles.User_Profiles_DB import search_value, insert_newprofile_up_db
@@ -45,14 +45,19 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 #possibly unnecessary ??
-db2 = create_engine('postgresql://postgres:postgre123@localhost:5432/ \
-SafeDrop_Users')
-DB2Session = sessionmaker(db2)
-db2session = DB2Session()
+engine = create_engine('postgresql://postgres:postgre123@localhost:5432/\
+SafeDrop_Logins', pool_size = 20, max_overflow=0)
+engine_session = sessionmaker(engine)
+db2session = engine_session()
+connection = db2session.connection()
 
 #for the chat portion
 socketio = SocketIO(app)
 
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
 
 
 #keep indents and formating on this as is, necessary for user creation
@@ -69,7 +74,86 @@ class UserLogins(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-db.create_all()
+class UserData(db.Model):
+    __tablename__="users"
+    id = db.Column(db.Integer, primary_key = True)
+    first_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64))
+    username = db.Column(db.String(64))
+    password_hash = db.Column(db.String(254))
+    email = db.Column(db.String(254))
+    age = db.Column(db.Integer)
+    date_joined = db.Column(db.String(64))
+    address = db.Column(db.String(64))
+    city = db.Column(db.String(64))
+    province = db.Column(db.String(64))
+    country = db.Column(db.String(64))
+    postal_code = db.Column(db.String(64))
+    txA = db.Column(db.Integer)
+    user_rating = db.Column(db.Integer)
+    status = db.Column(db.String(64))
+
+class DataOrders(db.Model):
+    __tablename__="orderInfo"
+    id = db.Column(db.Integer, primary_key=True)
+    TXID = db.Column(db.String(254))
+    B_username = db.Column(db.String(64))
+    S_username = db.Column(db.String(64))
+    I_name = db.Column(db.String(128))
+    description = db.Column(db.String(1500))
+    date_initialized = db.Column(db.String(128))
+    Cost = db.Column(db.Float)
+    Location = db.Column(db.String(64))
+    status = db.Column(db.String(128))
+    img_url = db.Column(db.String(24))
+    date_resolved = db.Column(db.String(128))
+
+class SafeBucksData(db.Model):
+    __tablename__="safebucks"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64))
+    bucks = db.Column(db.Float)
+
+class ImagesData(db.Model):
+    __tablename__="images"
+    id = db.Column(db.Integer, primary_key=True)
+    url_id = db.Column(db.String(254))
+    TXID = db.Column(db.String(254))
+    username = db.Column(db.String(64))
+    url = db.Column(db.String(254))
+    date = db.Column(db.String(64))
+
+class ConnectData(db.Model):
+    __tablename__="codelog"
+    id = db.Column(db.Integer, primary_key = True)
+    TXID = db.Column(db.String(254))
+    B_username = db.Column(db.String(64))
+    S_username = db.Column(db.String(64))
+    stage = db.Column(db.String(128))
+    box_id = db.Column(db.String(128))
+    access_code = db.Column(db.String(64))
+    expiry_time = db.Column(db.String(128))
+    code_attempt = db.Column(db.String(64))
+    attempt_time = db.Column(db.String(128))
+    seller_close_date = db.Column(db.String(128))
+    buyer_close_date = db.Column(db.String(128))
+    door_status = db.Column(db.String(64))
+    scale_status = db.Column(db.String(64))
+    scale_delta = db.Column(db.String(64))
+    in_box_image_url = db.Column(db.String(254))
+
+class ChatData(db.Model):
+    __tablename__="chatlog"
+    id = db.Column(db.Integer, primary_key=True)
+    TXID = db.Column(db.String(254))
+    B_username = db.Column(db.String(64))
+    S_username = db.Column(db.String(64))
+    Sender_username = db.Column(db.String(64))
+    msg = db.Column(db.String(254))
+    msg_date = db.Column(db.String(64))
+
+#db.create_all()
+
 
 #changes displayed initialized date based on how long ago they were posted
 def date_time (date):
@@ -92,8 +176,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-        return redirect(url_for('login'))
-
+    return redirect(url_for('login'))
 
 @app.route('/signup/', methods=['GET', 'POST'])
 def signup():
@@ -113,10 +196,15 @@ def signup():
         if request.form["signup_button"] == "signup":
             newuser = UserLogins(username = username)
             newuser.set_password(password)
-            db.session.add(newuser)
+            try:
+                db.session.add(newuser)
+                db.session.commit()
+            except exc.IntegrityError:
+                return render_template('login.html', error = "Username taken!")
+
             insert_newprofile_up_db(first_name, last_name, username, email, age, \
             address, city, province, country, postal_code)
-            db.session.commit()
+
             user = UserLogins.query.filter_by(username=username).first()
             if user is None or not user.check_password(password):
                 message='Invalid Credentials. Please try again.'
@@ -126,12 +214,10 @@ def signup():
                 return redirect(url_for('browse', page_id = 1))
 
             return redirect(url_for('profile'))
-    return render_template("signup.html")
 
 
 @app.route('/login/', methods=['GET', 'POST'])
-def login():
-    message= None
+def login(message=None):
     if current_user.is_authenticated:
         return redirect(url_for('browse', page_id = 1))
     if request.method == 'POST':
@@ -146,7 +232,8 @@ def login():
             else:
                 login_user(user)
                 return redirect(url_for('browse', page_id = 1))
-    return render_template("login.html", error = message)
+    error = message
+    return render_template("login.html", error = error)
 
 @app.route('/profile/')
 @login_required
@@ -195,7 +282,6 @@ def active_drops():
 
     for item in s_txid:
         txid = str(item)
-        txid = txid[2:-3]
         if (search_OrderValue('status', txid = txid) != "TRANSACTION COMPLETE"):
             if (search_OrderValue('B_username', txid=txid)) != 'None':
                 s_txids.append(txid)
@@ -210,7 +296,6 @@ def active_drops():
                     s_return.append('else')
             else:
                 txid = str(item)
-                txid = txid[2:-3]
                 a_txids.append(txid)
                 a_names.append(search_OrderValue('I_name', txid=txid))
                 a_price.append(search_OrderValue('Cost', txid=txid))
@@ -226,7 +311,6 @@ def active_drops():
     b_date = []
     for item in b_txid:
         txid = str(item)
-        txid = txid[2:-3]
         if (search_OrderValue('status', txid = txid) != "TRANSACTION COMPLETE"):
             b_txids.append(txid)
             b_names.append(search_OrderValue('I_name', txid=txid))
@@ -268,7 +352,7 @@ def confirmTX(chat_id):
         return redirect(url_for('transactionpage', chat_id = chat_id))
 
     if order_status == "Buyer_Seller_TX_Confirm":
-        newBoxAssignment(chat_id, "UBC ESC")
+        newBoxAssignment(chat_id, "SafeDrop UBC Box 1")
         return redirect(url_for('boxUse', chat_id = chat_id))
 
 
@@ -293,9 +377,13 @@ def transactionpage(chat_id):
     date_init = date_time(search_OrderValue('date_initialized', txid = chat_id))
     oldMsg = searchMsg(chat_id)
     oldMsgTime = []
+    oldMsgMsg = []
+    oldMsgSender = []
     for item in oldMsg:
         try:
-            oldMsgTime.append(date_time(item[6]))
+            oldMsgSender.append(item.Sender_username)
+            oldMsgMsg.append(item.msg)
+            oldMsgTime.append(date_time(item.msg_date))
         except TypeError:
             oldMsgTime.append('<i>time not available</i>')
 
@@ -304,7 +392,7 @@ def transactionpage(chat_id):
     str(current_user.username), FirstName=FirstName, LastName=LastName, \
     chatid = chat_id, item_name=item_name, location = location, \
     item_desc=item_desc, item_cost=item_cost, buy_user=buy_user, \
-    sell_user=sell_user, date_init=date_init, oldMsg = oldMsg,\
+    sell_user=sell_user, date_init=date_init, oldMsgMsg = oldMsgMsg, oldMsgSender=oldMsgSender,\
     request_code = request_code, code_msg = code_msg, oldMsgTime=oldMsgTime)
 
 def messageReceived(methods=['GET', 'POST']):
@@ -367,17 +455,19 @@ def boxUse(chat_id):
 def handle_confirm_drop(data, methods=['GET', 'POST']):
     print('got the sauce: ' + str(data))
     url = data['image_list']
-    user = current_user.username
-    I_name = data["I_name"]
-    I_cost = data["I_cost"]
-    I_desc = data["I_desc"]
-    location = data["place"]
-    S_name = current_user.username
+    print
+    user = str(current_user.username)
+    I_name = str(data["I_name"])
+    I_cost = str(data["I_cost"])
+    I_desc = str(data["I_desc"])
+    location = str(data["place"])
+    S_name = str(current_user.username)
     B_name = 'None'
     txid = newOrder(S_name, B_name, I_name, I_desc, I_cost, location)
     url_id = search_OrderValue('img_url', txid=txid)
     for item in url:
-        newImage(url_id, txid, user, item)
+        url = str(item)
+        newImage(url_id, txid, user, url)
 
 
 @app.route('/new_drop/', methods=['GET', 'POST'])
@@ -419,12 +509,12 @@ def buypage(txid):
         img = search_allImages(search_OrderValue('img_url', txid=txid))
         for item in img:
             try:
-                img = item[3]
-                img = str(img)
-                url.append(img)
+                img_url = item.url
+                img_url = str(img_url)
+                url.append(img_url)
             except IndexError:
-                img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
-                url.append(img)
+                img_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                url.append(img_url)
         item_name = search_OrderValue('I_name', txid = txid)
         location = search_OrderValue('Location', txid = txid)
         item_desc = search_OrderValue('description', txid = txid)
@@ -458,18 +548,17 @@ def history():
     h_url = []
     for item in h_txid:
         txid = str(item)
-        txid = txid[2:-3]
-        h_txids.append(str(item[1]))
-        b_names.append(str(item[2]))
-        s_names.append(item[3])
-        h_item.append(item[4])
-        h_price.append(item[7])
-        h_location.append(item[8])
-        h_date_open.append(item[6])
-        h_date_close.append(str(item[12]))
-        h_txstatus.append(item[9])
-        h_status.append(search_OrderValue('status',item[1]))
-        h_url.append(item[10])
+        h_txids.append(item.TXID)
+        b_names.append(item.B_username)
+        s_names.append(item.S_username)
+        h_item.append(item.I_name)
+        h_price.append(item.Cost)
+        h_location.append(item.Location)
+        h_date_open.append(item.date_initialized)
+        h_date_close.append(item.date_resolved)
+        h_txstatus.append(item.status)
+        h_status.append(search_OrderValue('status',item.TXID))
+        h_url.append(item.img_url)
     currentuser = current_user.username
     return render_template('history.html', FirstName=FirstName, currentuser=currentuser, \
         LastName = LastName, h_txids=h_txids, b_names=b_names, s_names=s_names,\
@@ -502,25 +591,23 @@ def browse(page_id):
         load_pages = load_txids[load_start:(load_start+10)]
 
         for item in load_pages:
-            if item[3] != None:
-                if SequenceMatcher(None, item[4], searchValue).ratio() > 0.6:
-                    SellerName.append(item[3])
-                    ItemName.append(item[4])
-                    ItemDesc.append(item[5])
-                    ItemCost.append(item[7])
-                    Location.append(item[8])
-                    date_post.append(date_time(item[6]))
-                    txid.append(item[1])
-                    img = search_allImages(url_id=item[10])
-                    try:
-                        img = img[0]
-                        img = img[3]
-                        img = str(img)
-                    except IndexError:
-                        img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
-                    url.append(img)
-
-
+            if item.S_username != None:
+                if SequenceMatcher(None, item.I_name, searchValue).ratio() > 0.6:
+                    SellerName.append(item.S_username)
+                    ItemName.append(item.I_name)
+                    ItemDesc.append(item.description)
+                    ItemCost.append(item.Cost)
+                    Location.append(item.Location)
+                    date_post.append(date_time(item.date_initialized))
+                    txid.append(item.TXID)
+                    img = search_allImages(url_id=item.img_url)
+                    for item in img:
+                        try:
+                            img_url = img.url
+                            img_url = str(img)
+                        except IndexError:
+                            img_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/  MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                        url.append(img_url)
             else:
                 pass
         if len(ItemName) == 0:
@@ -550,22 +637,28 @@ def browse(page_id):
     load_pages = load_txids[load_start:(load_start+10)]
 
     for item in load_pages:
-        if item[3] != None:
-            SellerName.append(item[3])
-            ItemName.append(item[4])
-            ItemDesc.append(item[5])
-            ItemCost.append(item[7])
-            Location.append(item[8])
-            date_post.append(date_time(item[6]))
-            txid.append(item[1])
-            img = search_allImages(url_id=str(item[10]))
-            try:
-                img = img[0]
-                img = img[3]
-                img = str(img)
-            except IndexError:
-                img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
-            url.append(img)
+        if item.S_username != None:
+            SellerName.append(item.S_username)
+            ItemName.append(item.I_name)
+            ItemDesc.append(item.description)
+            ItemCost.append(item.Cost)
+            Location.append(item.Location)
+            date_post.append(date_time(item.date_initialized))
+            txid.append(item.TXID)
+            img = search_allImages(url_id=item.img_url)
+            if len(img) != 0:
+                for item in img:
+                    try:
+                        img_url = item.url
+                        img_url = str(img_url)
+                    except IndexError:
+                        img_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                    except TypeError:
+                        img_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                    url.append(img_url)
+            else:
+                img_url = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHs8fS3u77Cxsnn7O/d4uXFyczN0dTKztHS19rk6ezi5+rX3N+9wcS1ubzIzxKwAAACWElEQVR4nO3b4XKiMBRAYUkUhQT6/m+7CK2GABJjdrl3e75/djo0p2FIGOF0AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAczpRxdMa2rrkW0LQnmY2mtrYqwtpWYqLpvsr0jY0SEy+FJvA7sT66Z8E0JQOr6ixuEs00sKaAaRKPDloYT1LblVgrvBV5ml4KDuu/Lyz5zyroFxYOe6/M/ZeOQtNdrbV9e8loVFHo+mn9t8PV9cNDiTEbln/ubzL2XxoKw83J19tDlV9obrMtav/uJCoonO/B3x6r/MI6KrxtTaK57B1KkmBYXXQf1WwUDrcjq4nyC+u0QtMMv7eWKL/QR2fp+noxBq4myi9MutJ8B64lKihMWC0egSuJ8gsTVvwgcJmooXBv1zYLXCRqKNzZeUeBcaKKwvvdU7V197QIjBJ1FL64A14JnCdqKdyyGjhLVF64ERgm6i7cDAwSVRe+CHwmKiv0PvjwMvCRqKvQWeseH3YCfxJVFbr7D38SdwOrym0f6nCrw3LBuFMCpy2eokIXTk1CoLpC9xy5SwrUVujCsbuUQGWFbj72hD5lhW6vRnthVqCmwrxARYWZgXoKcwPVFGYHqimMv7egkEIhKKSQwuOFhedsXXQoScJhffgagoJCOYcqicJ3yCychtWWeM57fFrF+v0/+W+Zfrzc519Gn8bFRt6z+tEDGB+7invfYv4AxseCbzvk8AUnMefR4r/PuLMtpPcSAwfGt7cC2lpo312JxULyK6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Gv8AbboIxLMxQycAAAAAElFTkSuQmCC"
+                url.append(img_url)
 
 
         else:

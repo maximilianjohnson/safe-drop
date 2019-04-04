@@ -4,69 +4,64 @@ and can add new entries with this info:
 username, safebucks
 
 """
-#Author: Maximilian Johnson
-#Date: March 24th 2019
+#Author: Andrew Moreno
+#Date: April 2nd, 2019
 
 #Imports
-
 import sys
 sys.path.append('../')
 
 from Order_Info.OrderInfo_Backend import search_OrderValue
 import psycopg2
+import json
+from flask import Flask, render_template, redirect, url_for, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, update, or_
+from sqlalchemy.orm import sessionmaker
+
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgre123@\
+localhost:5432/SafeDrop_SafeBucks'
+app.config['SECRET_KEY'] = 'thisissecret'
+
+db = SQLAlchemy(app)
 
 #connects to database
 #Info stored: Transaction number in ascending order, random generated order ID,
 #Buyer username, seller username, item name, date initialized, cost, location,
 #order status, date in which data was last modified, date transaction resolves
-def connect_safebucks():
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS safebucks (username TEXT, \
-                 bucks REAL)")
-    conn.commit()
-    conn.close()
 
-#connects to database
-#connect_safebucks()
+class SafeBucksData(db.Model):
+    __tablename__="safebucks"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64))
+    bucks = db.Column(db.Float)
 
-#Function uses values to add new order to psycopg2 database
-def addUserBucks(user):
-    connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
+
+def addUserBucks(username):
     bucks = 100.00
-    cur.execute("INSERT INTO safebucks VALUES(%s, %s)", (user, bucks))
-    conn.commit()
-    conn.close()
+    SafeBucksData(username = username, bucks = bucks)
+    db.session.add(addUserBucks)
+    db.session.commit()
 
-def searchBucks(user):
-    connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
-    cur.execute("SELECT bucks FROM safebucks WHERE username=%s", (user,))
-    value = cur.fetchall()
-    for item in value:
-        return ("%s" % item)
+def searchBucks(username):
+    row = SafeBucksData.query.filter_by(username = username).first()
+    search = row.bucks
+    return search
 
-def updateBucks(user, bucks):
-    connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
-    cur.execute("UPDATE safebucks SET bucks=%s WHERE username=%s", (bucks, user))
-    conn.commit()
-    conn.close()
+def updateBucks(username, bucks):
+    row = SafeBucksData(username = username).first()
+    row.bucks = bucks
+    db.session.commit()
 
-def add100Bucks(user):
-    connect_safebucks()
-    conn=psycopg2.connect("dbname='SafeDrop_SafeBucks' user='postgres' password='postgre123' host='localhost' port = '5433'")
-    cur=conn.cursor()
+def add100Bucks(username):
+    row = SafeBucksData.query.filter_by(username = username).first()
     bucks_i = float(searchBucks(user))
     bucks = bucks_i + 100
-
-    cur.execute("UPDATE safebucks SET bucks=%s WHERE username=%s", (bucks, user))
-    conn.commit()
-    conn.close()
+    row.bucks = bucks
+    db.session.commit()
 
 def completeMoneyTransfer(txid):
     cost = search_OrderValue('cost', txid)
