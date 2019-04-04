@@ -101,19 +101,15 @@
   padding: 10px 15px;
   display: block;
   color: #E1E1E1;
-  background-color: #36DC52;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#36DC52), to(#128B15));
-  background-image: -webkit-linear-gradient(top, #36DC52, #128B15);
-  background-image: linear-gradient(to bottom, #36DC52, #128B15);
+  background-color: #33A1CF;
+  background-image: linear-gradient(to bottom, #33A1CF, #1677a3);
   margin: 225px auto 30px;
   border: none;
 }
 
 .post_button:hover {
-  background-color: #FFAFBD;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#FFAFBD), to(#ffc3a0));
-  background-image: -webkit-linear-gradient(top, #FFAFBD, #ffc3a0);
-  background-image: linear-gradient(to bottom, #FFAFBD, #ffc3a0);
+  background-color: #1677a3;
+  background-image: linear-gradient(to bottom, #1677a3, #33A1CF);
 }
 
 @media only screen and (max-width: 850px) {
@@ -121,7 +117,7 @@
     width: 93vw;
   }
 
-  .drop_info input, textarea {
+  .drop_info input, textarea, select, option {
     width: 65vw;
   }
 
@@ -136,7 +132,7 @@
 }
 
 @media only screen and (max-width: 670px) {
-  .drop_info input, textarea {
+  .drop_info input, textarea, select, option {
     width: 50vw;
   }
 }
