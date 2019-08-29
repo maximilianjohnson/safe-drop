@@ -1,6 +1,6 @@
 # safe-drop
 Safe Drop System Project
-The SafeDrop project was created to combat an issue we identified with online peer-to-peer e-marketplaces, personal meetups.
+The SafeDrop project was created to combat an issue we identified with online peer-to-peer marketplaces, the in-person meetups.
 We set out to design a system which would allow users to exchange second hand goods for money without meeting in person.
 This involved created a safe box with pin-code access where users could drop off and pick up goods,
 and a full website dedicated to creating and managing these transactions.
